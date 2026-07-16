@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "hardhat compile && tsc --noEmit",
     "test": "vitest run",
     "test:contracts": "hardhat test",
     "test:e2e": "playwright test",
