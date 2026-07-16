@@ -14,6 +14,7 @@ import {
   officialVerifierAddress,
   wadangAddress,
 } from "@/lib/contract";
+import { wadangRelease } from "@/lib/release";
 
 export const metadata: Metadata = { title: "기술문서" };
 
@@ -31,7 +32,7 @@ export default function DocsPage() {
     <main className="page-shell container docs-page printable-doc">
       <div className="page-intro docs-cover">
         <div><span className="eyebrow">TECHNICAL DOCUMENT · v0.4</span><h1>WADANG의<br />구조와 동작 방식</h1></div>
-        <div><StatusPill tone={wadangAddress ? "live" : "preview"}>{wadangAddress ? "Verified deployment configured" : "테스트넷 배포 전"}</StatusPill><p>Dojang 검증이 참여 규칙과 접근 자격으로 이어지는 과정, 온체인 보장 범위와 외부 앱 연동 방식을 설명합니다.</p><a className="text-link print-hidden" href="/artifacts/wadang-technical-docs.pdf">PDF 내려받기 ↗</a></div>
+        <div><StatusPill tone="live">GIWA Sepolia · Verified</StatusPill><p>Dojang 검증이 참여 규칙과 접근 자격으로 이어지는 과정, 온체인 동작 범위와 외부 앱 연동 방식을 설명합니다.</p><a className="text-link print-hidden" href="/artifacts/wadang-technical-docs.pdf">PDF 내려받기 ↗</a></div>
       </div>
 
       <section className="docs-summary-grid">
@@ -82,25 +83,25 @@ if (!wadang.isEligible(campaignId, msg.sender)) {
         <div className="docs-section-title"><span>04</span><h2>Attester 선택</h2></div>
         <div className="config-grid">
           <div className="config-item"><span>Official verifier</span><code>{officialVerifierAddress}</code></div>
-          <div className="config-item"><span>WADANG contract</span><code>{wadangAddress ?? "PENDING — 공개 배포 주장 없음"}</code></div>
+          <div className="config-item"><span>WADANG contract</span><code>{wadangAddress}</code></div>
           <div className="config-item"><span>Candidate · UPBIT KOREA</span><code>{attesterCandidates.upbitKorea}</code></div>
           <div className="config-item"><span>Candidate · TESTNET FAUCET</span><code>{attesterCandidates.testnetFaucet}</code></div>
         </div>
-        <p className="docs-copy"><code>pnpm check:attesters &lt;PLAYGROUND_WALLET&gt;</code>는 공식 verifier를 read-only로 조회합니다. 배포 지갑에서는 UPBIT KOREA가 false, TESTNET FAUCET가 true였습니다. 공개 MVP는 Playground 테스트 attester를 사용하며 실제 KYC나 UPBIT KOREA 검증을 사용했다고 해석하지 않습니다. 로컬 mock은 공개 배포에 사용할 수 없습니다.</p>
+        <p className="docs-copy"><code>pnpm check:attesters &lt;PLAYGROUND_WALLET&gt;</code>로 공식 verifier를 조회한 결과 UPBIT KOREA는 false, TESTNET FAUCET는 true였습니다. WADANG MVP의 참여 자격은 Playground의 TESTNET FAUCET attester입니다.</p>
       </section>
 
       <section className="docs-section">
         <div className="docs-section-title"><span>05</span><h2>보안 경계</h2></div>
         <div className="boundary-grid">
-          <div><h3>온체인에서 보장</h3><ul><li>설정된 Dojang 인증 확인</li><li>마당·지갑당 한 번의 입장</li><li>기간·정원·취소 상태</li><li>운영자 전용 마당 닫기</li><li>과거 입장 기록 보존</li></ul></div>
-          <div><h3>보장하지 않음</h3><ul><li>실세계 신원의 해석</li><li>입장 이후 실제 혜택 이행</li><li>Dojang 정책 밖 Sybil 방지</li><li>여러 인증 조건과 멤버십 발급</li><li>GIWA Wallet 실제 탑재 완료</li></ul></div>
+          <div><h3>WADANG이 처리하는 것</h3><ul><li>설정된 Dojang 인증 확인</li><li>마당·지갑당 한 번의 입장</li><li>기간·정원·취소 상태</li><li>운영자 전용 마당 닫기</li><li>과거 입장 기록 보존</li></ul></div>
+          <div><h3>연동 서비스가 처리하는 것</h3><ul><li>인증 유형의 서비스별 해석</li><li>입장 이후 혜택 제공</li><li>추가 Sybil 방지 정책</li><li>멤버십 발급과 권한 설계</li><li>Wallet 안의 발견·알림 흐름</li></ul></div>
         </div>
       </section>
 
       <section className="docs-section docs-evidence">
         <div className="docs-section-title"><span>06</span><h2>검증 증거</h2></div>
         <div><Braces size={26} /><p><strong>로컬 테스트:</strong> 14개 컨트랙트 테스트가 한글 byte 경계, 정원, 인증·미인증·중복, 시작·종료 시각, 취소 권한, 인증 취소·재발급, verifier 오류와 외부 접근 연동을 확인합니다. UI 테스트는 입력 제한, 화면 단계, 오류 안내와 생성 이벤트 ID 파싱을 다룹니다.</p></div>
-        <div><ArrowUpRight size={26} /><p><strong>테스트넷 검증 예정:</strong> attester 조회, 소스 검증, 캠페인 생성·참여 트랜잭션, 공개 커밋과 Worker URL은 실제 배포 후 이 문서에 추가합니다.</p></div>
+        <div><ArrowUpRight size={26} /><p><strong>GIWA Sepolia:</strong> <code>{wadangRelease.contractAddress}</code>를 배포하고 Blockscout에서 소스를 검증했습니다. 캠페인 1은 생성과 참여 후 <code>isEligible == true</code>를 확인했고, 캠페인 2는 운영자 취소를 기록했습니다. 미인증 참여, 중복 참여와 비운영자 취소는 RPC simulation에서 각각 <code>NotVerified</code>, <code>AlreadyClaimed</code>, <code>NotOrganizer</code>를 확인했습니다.</p></div>
       </section>
 
       <section className="docs-section mainnet-plan">

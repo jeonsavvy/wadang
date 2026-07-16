@@ -12,10 +12,15 @@ import Link from "next/link";
 import { StatusPill } from "@/components/status-pill";
 import { explorerUrl } from "@/lib/chain";
 import { wadangAddress } from "@/lib/contract";
+import {
+  repositoryUrl,
+  sourceCommitUrl,
+  wadangRelease,
+} from "@/lib/release";
 
 export const metadata: Metadata = { title: "GASOK 제출자료" };
 
-const repositoryUrl = "https://github.com/jeonsavvy/wadang";
+const transactionUrl = (hash: string) => `${explorerUrl}/tx/${hash}`;
 
 export default function GasokPage() {
   return (
@@ -26,9 +31,7 @@ export default function GasokPage() {
           <h1>WADANG<br />제출자료</h1>
         </div>
         <div>
-          <StatusPill tone={wadangAddress ? "live" : "preview"}>
-            {wadangAddress ? "GIWA Sepolia 연결됨" : "테스트넷 배포 전"}
-          </StatusPill>
+          <StatusPill tone="live">GIWA Sepolia 검증 완료</StatusPill>
           <p>작동 MVP, 팀, 기술 구현과 공개 소스를 한곳에서 확인할 수 있습니다. WADANG은 Dojang 검증을 참여 규칙으로 사용하고, 그 결과를 다른 앱이 접근 자격으로 다시 읽게 합니다.</p>
         </div>
       </div>
@@ -74,21 +77,20 @@ export default function GasokPage() {
           <span>VERIFIED CONTRACT</span>
           <h2>GIWA Explorer</h2>
           <p>배포 주소, 검증된 소스와 실제 테스트넷 트랜잭션을 확인합니다.</p>
-          {wadangAddress ? (
-            <a className="text-link" href={`${explorerUrl}/address/${wadangAddress}`} rel="noreferrer" target="_blank">컨트랙트 열기 <ExternalLink size={12} /></a>
-          ) : (
-            <span>배포 후 링크 활성화</span>
-          )}
+          <a className="text-link" href={`${explorerUrl}/address/${wadangAddress}#code`} rel="noreferrer" target="_blank">검증된 소스 열기 <ExternalLink size={12} /></a>
         </article>
       </section>
 
       <section className="gasok-release">
         <ShieldCheck size={28} />
         <dl>
-          <dt>Network</dt><dd>GIWA Sepolia · Chain ID 91342</dd>
-          <dt>Contract</dt><dd><code>{wadangAddress ?? "PENDING"}</code></dd>
-          <dt>Repository</dt><dd>{repositoryUrl}</dd>
-          <dt>Track</dt><dd>Track 03 · GIWA-NATIVE IDEAS</dd>
+          <dt>Network</dt><dd>{wadangRelease.network} · Chain ID {wadangRelease.chainId}</dd>
+          <dt>Contract</dt><dd><a href={`${explorerUrl}/address/${wadangRelease.contractAddress}#code`} rel="noreferrer" target="_blank"><code>{wadangRelease.contractAddress}</code></a></dd>
+          <dt>Campaign 1</dt><dd><Link href="/madang/1">생성·참여·현재 자격 확인</Link> · <a href={transactionUrl(wadangRelease.transactions.createCampaign1)} rel="noreferrer" target="_blank">생성 영수증</a> · <a href={transactionUrl(wadangRelease.transactions.claimCampaign1)} rel="noreferrer" target="_blank">참여 영수증</a></dd>
+          <dt>Campaign 2</dt><dd><a href={transactionUrl(wadangRelease.transactions.cancelCampaign2)} rel="noreferrer" target="_blank">운영자 취소 영수증</a></dd>
+          <dt>Simulation</dt><dd>미인증 {wadangRelease.simulations.unverifiedClaim} · 중복 {wadangRelease.simulations.duplicateClaim} · 비운영자 취소 {wadangRelease.simulations.unauthorizedCancel}</dd>
+          <dt>Source</dt><dd><a href={sourceCommitUrl} rel="noreferrer" target="_blank"><code>{wadangRelease.sourceCommit.slice(0, 8)}</code></a> · Solidity SHA-256 <code>{wadangRelease.contractSourceSha256}</code></dd>
+          <dt>Published</dt><dd>{wadangRelease.publishedAt} · Track 03 GIWA-NATIVE IDEAS</dd>
         </dl>
       </section>
     </main>

@@ -6,11 +6,17 @@ import {
   type Hex,
 } from "viem";
 
-const configuredAddress = process.env.NEXT_PUBLIC_WADANG_CONTRACT_ADDRESS ?? "";
+import { wadangRelease } from "./release";
 
-export const wadangAddress: Address | undefined = isAddress(configuredAddress)
-  ? getAddress(configuredAddress)
-  : undefined;
+const configuredAddress =
+  process.env.NEXT_PUBLIC_WADANG_CONTRACT_ADDRESS ||
+  wadangRelease.contractAddress;
+
+if (!isAddress(configuredAddress)) {
+  throw new Error("NEXT_PUBLIC_WADANG_CONTRACT_ADDRESS must be a valid address");
+}
+
+export const wadangAddress: Address = getAddress(configuredAddress);
 
 export const officialVerifierAddress = getAddress(
   "0xd5077b67dcb56caC8b270C7788FC3E6ee03F17B9",

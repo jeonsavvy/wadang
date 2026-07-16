@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 
 import { WadangMark } from "@/components/wadang-mark";
 import { wadangAddress } from "@/lib/contract";
+import { wadangRelease } from "@/lib/release";
 
 export const metadata: Metadata = { title: "GASOK 피치덱" };
 
@@ -71,14 +72,14 @@ export default function DeckPage() {
 
       <section className="deck-slide deck-demo">
         <DeckChrome number={5}>
-          <div className="deck-tag">{wadangAddress ? "WORKING TESTNET MVP" : "TESTNET EVIDENCE"}</div>
-          <h2>규칙 생성부터 접근 자격 확인까지<br /><em>{wadangAddress ? "테스트넷에서 확인했습니다." : "테스트넷에서 확인할 항목입니다."}</em></h2>
+          <div className="deck-tag">WORKING TESTNET MVP</div>
+          <h2>규칙 생성부터 접근 자격 확인까지<br /><em>GIWA Sepolia에서 실행했습니다.</em></h2>
           <div className="deck-demo-frame">
-            <div className="deck-browser"><span /><span /><span /><b>wadang.&lt;account&gt;.workers.dev/madang/&lt;id&gt;</b></div>
-            <div className="deck-demo-card"><small>MADANG · DOJANG CHECK</small><BadgeCheck /><h3>{wadangAddress ? "TESTNET CONTRACT CONNECTED" : "테스트넷 배포 전"}</h3><p>{wadangAddress ?? "배포 후 실제 컨트랙트 주소와 참여 영수증을 표시합니다."}</p><button>입장하기</button></div>
-            <div className="deck-evidence"><strong>{wadangAddress ? "ONCHAIN ADDRESS CONFIGURED" : "LOCAL MVP"}</strong><span>14 contract scenarios</span><span>Composable access test</span><span>Explorer receipts · {wadangAddress ? "connected" : "pending"}</span></div>
+            <div className="deck-browser"><span /><span /><span /><b>WADANG · GIWA SEPOLIA · MADANG 1</b></div>
+            <div className="deck-demo-card"><small>MADANG · DOJANG CHECK</small><BadgeCheck /><h3>TESTNET CONTRACT CONNECTED</h3><p>{wadangAddress}</p><button>입장 완료 · isEligible true</button></div>
+            <div className="deck-evidence"><strong>VERIFIED ONCHAIN</strong><span>Campaign 1 · create + claim</span><span>Campaign 2 · create + cancel</span><span>14 contract scenarios</span><span>Source · {wadangRelease.sourceCommit.slice(0, 8)}</span></div>
           </div>
-          <p className="deck-footnote">{wadangAddress ? "컨트랙트 주소, 생성·참여 트랜잭션, 검증된 소스와 공개 커밋을 같은 릴리스로 확인합니다." : "배포·소스 검증 후 실제 주소와 트랜잭션 화면으로 교체합니다."}</p>
+          <p className="deck-footnote">Verified contract · {wadangRelease.contractAddress} · Campaign 1 참여 후 현재 자격 true</p>
         </DeckChrome>
       </section>
 

@@ -8,6 +8,7 @@ import {
   getAddress,
   isAddress,
   type Address,
+  type Hash,
 } from "viem";
 
 import { wadangAbi } from "../src/lib/contract.js";
@@ -20,6 +21,8 @@ if (!isAddress(expectedInput)) throw new Error("EXPECTED_DEPLOYER_ADDRESS is req
 const contractAddress = getAddress(contractInput);
 const expectedDeployer = getAddress(expectedInput);
 const unverifiedCaller = getAddress("0x000000000000000000000000000000000000dEaD");
+const firstTitle = "WADANG 테스트넷 입장";
+const secondTitle = "WADANG 닫기 검증";
 
 const { viem } = await network.create();
 const publicClient = await viem.getPublicClient();
@@ -27,6 +30,30 @@ const [wallet] = await viem.getWalletClients();
 if (!wallet) throw new Error("No configured deployment wallet");
 if (getAddress(wallet.account.address) !== expectedDeployer) {
   throw new Error(`Configured deployer mismatch: expected ${expectedDeployer}, got ${wallet.account.address}`);
+}
+
+type TransactionEvidence = {
+  campaignId?: string;
+  hash: Hash;
+  blockNumber: string;
+  isEligible?: boolean;
+};
+
+const sleep = (milliseconds: number) =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function waitFor<T>(
+  label: string,
+  read: () => Promise<T>,
+  accept: (value: T) => boolean,
+) {
+  let latest: T | undefined;
+  for (let attempt = 1; attempt <= 30; attempt += 1) {
+    latest = await read();
+    if (accept(latest)) return latest;
+    await sleep(2_000);
+  }
+  throw new Error(`${label} did not become consistent; latest=${String(latest)}`);
 }
 
 function revertName(error: unknown) {
@@ -61,6 +88,33 @@ async function expectSimulationRevert(
   throw new Error(`${functionName} simulation unexpectedly succeeded for ${account}`);
 }
 
+async function recentEvents(eventName: "CampaignCreated" | "CampaignClaimed" | "CampaignCanceledByOrganizer") {
+  const latestBlock = await publicClient.getBlockNumber();
+  const fromBlock = latestBlock > 10_000n ? latestBlock - 10_000n : 0n;
+  return publicClient.getContractEvents({
+    address: contractAddress,
+    abi: wadangAbi,
+    eventName,
+    fromBlock,
+    toBlock: "latest",
+  });
+}
+
+async function existingTransaction(
+  eventName: "CampaignCreated" | "CampaignClaimed" | "CampaignCanceledByOrganizer",
+  campaignId: bigint,
+) {
+  const events = await recentEvents(eventName);
+  const event = events.find((candidate) => candidate.args.campaignId === campaignId);
+  if (!event?.transactionHash || event.blockNumber === null) {
+    throw new Error(`${eventName} event not found for campaign ${campaignId}`);
+  }
+  return {
+    hash: event.transactionHash,
+    blockNumber: event.blockNumber.toString(),
+  };
+}
+
 async function createCampaign(title: string, details: string) {
   const block = await publicClient.getBlock();
   const hash = await wallet.writeContract({
@@ -88,11 +142,56 @@ async function createCampaign(title: string, details: string) {
     }
   }
   if (campaignId === undefined) throw new Error("CampaignCreated event not found");
-  return { campaignId, hash, blockNumber: receipt.blockNumber };
+  await waitFor(
+    `campaign ${campaignId} visibility`,
+    () => publicClient.readContract({
+      address: contractAddress,
+      abi: wadangAbi,
+      functionName: "campaignCount",
+    }),
+    (count) => count >= campaignId!,
+  );
+  return {
+    campaignId,
+    evidence: {
+      campaignId: campaignId.toString(),
+      hash,
+      blockNumber: receipt.blockNumber.toString(),
+    } satisfies TransactionEvidence,
+  };
 }
 
-const first = await createCampaign(
-  "WADANG 테스트넷 입장",
+async function loadOrCreateCampaign(
+  campaignId: bigint,
+  title: string,
+  details: string,
+) {
+  const count = await publicClient.readContract({
+    address: contractAddress,
+    abi: wadangAbi,
+    functionName: "campaignCount",
+  });
+  if (count < campaignId) return createCampaign(title, details);
+
+  const campaign = await publicClient.readContract({
+    address: contractAddress,
+    abi: wadangAbi,
+    functionName: "getCampaign",
+    args: [campaignId],
+  });
+  if (campaign.title !== title || getAddress(campaign.organizer) !== expectedDeployer) {
+    throw new Error(`Existing campaign ${campaignId} does not match the evidence fixture`);
+  }
+  const transaction = await existingTransaction("CampaignCreated", campaignId);
+  return {
+    campaignId,
+    evidence: { campaignId: campaignId.toString(), ...transaction } satisfies TransactionEvidence,
+  };
+}
+
+const first = await loadOrCreateCampaign(
+  1n,
+  firstTitle,
   "Playground 테스트 인증 지갑의 참여와 접근 자격을 검증합니다.",
 );
 
@@ -105,20 +204,37 @@ if (unverifiedClaim !== "NotVerified") {
   throw new Error(`Expected NotVerified simulation, got ${unverifiedClaim}`);
 }
 
-const claimHash = await wallet.writeContract({
+let claimEvidence: TransactionEvidence;
+const alreadyClaimed = await publicClient.readContract({
   address: contractAddress,
   abi: wadangAbi,
-  functionName: "claim",
-  args: [first.campaignId],
-});
-const claimReceipt = await publicClient.waitForTransactionReceipt({ hash: claimHash });
-const eligible = await publicClient.readContract({
-  address: contractAddress,
-  abi: wadangAbi,
-  functionName: "isEligible",
+  functionName: "hasClaimed",
   args: [first.campaignId, expectedDeployer],
 });
-if (!eligible) throw new Error("Expected isEligible to return true after claim");
+if (alreadyClaimed) {
+  claimEvidence = await existingTransaction("CampaignClaimed", first.campaignId);
+} else {
+  const hash = await wallet.writeContract({
+    address: contractAddress,
+    abi: wadangAbi,
+    functionName: "claim",
+    args: [first.campaignId],
+  });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  claimEvidence = { hash, blockNumber: receipt.blockNumber.toString() };
+}
+
+const eligible = await waitFor(
+  "isEligible after claim",
+  () => publicClient.readContract({
+    address: contractAddress,
+    abi: wadangAbi,
+    functionName: "isEligible",
+    args: [first.campaignId, expectedDeployer],
+  }),
+  Boolean,
+);
+claimEvidence.isEligible = eligible;
 
 const duplicateClaim = await expectSimulationRevert(
   "claim",
@@ -129,8 +245,9 @@ if (duplicateClaim !== "AlreadyClaimed") {
   throw new Error(`Expected AlreadyClaimed simulation, got ${duplicateClaim}`);
 }
 
-const second = await createCampaign(
-  "WADANG 닫기 검증",
+const second = await loadOrCreateCampaign(
+  2n,
+  secondTitle,
   "운영자 권한과 취소 이후 상태를 확인합니다.",
 );
 const unauthorizedCancel = await expectSimulationRevert(
@@ -142,13 +259,35 @@ if (unauthorizedCancel !== "NotOrganizer") {
   throw new Error(`Expected NotOrganizer simulation, got ${unauthorizedCancel}`);
 }
 
-const cancelHash = await wallet.writeContract({
+let cancelEvidence: TransactionEvidence;
+const secondCampaign = await publicClient.readContract({
   address: contractAddress,
   abi: wadangAbi,
-  functionName: "cancelCampaign",
+  functionName: "getCampaign",
   args: [second.campaignId],
 });
-const cancelReceipt = await publicClient.waitForTransactionReceipt({ hash: cancelHash });
+if (secondCampaign.canceled) {
+  cancelEvidence = await existingTransaction("CampaignCanceledByOrganizer", second.campaignId);
+} else {
+  const hash = await wallet.writeContract({
+    address: contractAddress,
+    abi: wadangAbi,
+    functionName: "cancelCampaign",
+    args: [second.campaignId],
+  });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  cancelEvidence = { hash, blockNumber: receipt.blockNumber.toString() };
+  await waitFor(
+    "campaign cancellation visibility",
+    () => publicClient.readContract({
+      address: contractAddress,
+      abi: wadangAbi,
+      functionName: "getCampaign",
+      args: [second.campaignId],
+    }),
+    (campaign) => campaign.canceled,
+  );
+}
 
 const evidence = {
   generatedAt: new Date().toISOString(),
@@ -156,32 +295,17 @@ const evidence = {
   contractAddress,
   account: expectedDeployer,
   transactions: {
-    createCampaign1: {
-      campaignId: first.campaignId.toString(),
-      hash: first.hash,
-      blockNumber: first.blockNumber.toString(),
-    },
-    claimCampaign1: {
-      hash: claimHash,
-      blockNumber: claimReceipt.blockNumber.toString(),
-      isEligible: eligible,
-    },
-    createCampaign2: {
-      campaignId: second.campaignId.toString(),
-      hash: second.hash,
-      blockNumber: second.blockNumber.toString(),
-    },
-    cancelCampaign2: {
-      hash: cancelHash,
-      blockNumber: cancelReceipt.blockNumber.toString(),
-    },
+    createCampaign1: first.evidence,
+    claimCampaign1: claimEvidence,
+    createCampaign2: second.evidence,
+    cancelCampaign2: cancelEvidence,
   },
   simulations: {
     unverifiedClaim: { account: unverifiedCaller, result: unverifiedClaim },
     duplicateClaim: { account: expectedDeployer, result: duplicateClaim },
     unauthorizedCancel: { account: unverifiedCaller, result: unauthorizedCancel },
   },
-} satisfies Record<string, unknown>;
+};
 
 await mkdir("tmp", { recursive: true });
 await writeFile("tmp/testnet-evidence.json", `${JSON.stringify(evidence, null, 2)}\n`);

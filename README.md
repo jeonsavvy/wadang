@@ -49,6 +49,17 @@ isEligible(uint256 campaignId, address account)
 
 컨트랙트는 현재 Dojang 검증, 지갑당 한 번의 참여, 기간, 정원, 취소 상태와 운영자 권한을 강제합니다. 자금이나 토큰을 보관하지 않으며 관리자, 업그레이드, 임의 호출 기능이 없습니다.
 
+### GIWA Sepolia 배포
+
+- Contract: [`0x4a787Aa8BD73bBA2F8a19a36672A808DAE8D5050`](https://sepolia-explorer.giwa.io/address/0x4a787Aa8BD73bBA2F8a19a36672A808DAE8D5050#code)
+- Campaign 1 생성: [`0x185fffa6...db699d1`](https://sepolia-explorer.giwa.io/tx/0x185fffa6e324e1d1c06beb7bb1bf69fdf5e31da98eb2f01fceb5b5f69db699d1)
+- Campaign 1 참여: [`0x9d3df05a...f038399`](https://sepolia-explorer.giwa.io/tx/0x9d3df05a011fd01c4c02859e6961e0e082392443d58daaf8f321ea337f038399)
+- Campaign 2 취소: [`0x49851234...8e0885`](https://sepolia-explorer.giwa.io/tx/0x49851234ce172f014c2a11feb75cfca370cfa8824a800c0ec6ee94b6bd8e0885)
+- 배포 소스 커밋: [`27b70b52`](https://github.com/jeonsavvy/wadang/commit/27b70b520654110d216a5c9db8083043e4251d7e)
+- `contracts/WadangCampaigns.sol` SHA-256: `86a60fe99f44b2890d8da5c36a36faa08a57dcc5f9c920b180b7838187b5a86b`
+
+캠페인 1 참여 후 `isEligible(1, participant) == true`를 확인했습니다. 미인증 참여, 중복 참여와 비운영자 취소는 RPC simulation에서 각각 `NotVerified`, `AlreadyClaimed`, `NotOrganizer`로 거절됐습니다.
+
 ## 로컬 실행
 
 ```powershell
@@ -57,7 +68,7 @@ Copy-Item .env.example .env.local
 pnpm dev
 ```
 
-검증된 배포 주소가 없으면 온체인 쓰기 버튼은 비활성화됩니다.
+기본 설정은 위 GIWA Sepolia 배포 주소를 사용합니다. 다른 배포를 연결할 때만 `NEXT_PUBLIC_WADANG_CONTRACT_ADDRESS`를 지정합니다.
 
 ## 검증
 
