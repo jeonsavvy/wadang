@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">WADANG seal</title>
+  <desc id="desc">An original circular rosette inspired by overlapping roof-tile rhythm.</desc>
+  <circle cx="48" cy="48" r="44" fill="none" stroke="currentColor" stroke-width="4"/>
+  <circle cx="48" cy="48" r="34" fill="none" stroke="currentColor" stroke-width="2" opacity=".55"/>
+  <g fill="currentColor">
+    <path d="M48 16c6 8 8 15 0 24-8-9-6-16 0-24Z"/>
+    <path d="M80 48c-8 6-15 8-24 0 9-8 16-6 24 0Z"/>
+    <path d="M48 80c-6-8-8-15 0-24 8 9 6 16 0 24Z"/>
+    <path d="M16 48c8-6 15-8 24 0-9 8-16 6-24 0Z"/>
+    <path d="M70.6 25.4c-1.4 9.9-5 16.2-16.9 16.9.7-11.9 7-15.5 16.9-16.9Z"/>
+    <path d="M70.6 70.6c-9.9-1.4-16.2-5-16.9-16.9 11.9.7 15.5 7 16.9 16.9Z"/>
+    <path d="M25.4 70.6c1.4-9.9 5-16.2 16.9-16.9-.7 11.9-7 15.5-16.9 16.9Z"/>
+    <path d="M25.4 25.4c9.9 1.4 16.2 5 16.9 16.9-11.9-.7-15.5-7-16.9-16.9Z"/>
+    <circle cx="48" cy="48" r="7"/>
+  </g>
+</svg>
