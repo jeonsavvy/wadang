@@ -14,6 +14,7 @@ const eslintConfig = defineConfig([
     "artifacts/**",
     "cache/**",
     ".open-next/**",
+    ".wrangler/**",
     "tmp/**",
     "ignition/deployments/**",
     "playwright-report/**",

@@ -2,6 +2,7 @@ export const wadangRelease = {
   network: "GIWA Sepolia",
   chainId: 91_342,
   publishedAt: "2026-07-16",
+  appUrl: "https://wadang.jeonsavvy.workers.dev",
   contractAddress: "0x4a787Aa8BD73bBA2F8a19a36672A808DAE8D5050",
   verifierAddress: "0xd5077b67dcb56caC8b270C7788FC3E6ee03F17B9",
   attesterId:

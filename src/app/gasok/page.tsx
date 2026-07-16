@@ -85,6 +85,7 @@ export default function GasokPage() {
         <ShieldCheck size={28} />
         <dl>
           <dt>Network</dt><dd>{wadangRelease.network} · Chain ID {wadangRelease.chainId}</dd>
+          <dt>Application</dt><dd><a href={wadangRelease.appUrl}>{wadangRelease.appUrl}</a></dd>
           <dt>Contract</dt><dd><a href={`${explorerUrl}/address/${wadangRelease.contractAddress}#code`} rel="noreferrer" target="_blank"><code>{wadangRelease.contractAddress}</code></a></dd>
           <dt>Campaign 1</dt><dd><Link href="/madang/1">생성·참여·현재 자격 확인</Link> · <a href={transactionUrl(wadangRelease.transactions.createCampaign1)} rel="noreferrer" target="_blank">생성 영수증</a> · <a href={transactionUrl(wadangRelease.transactions.claimCampaign1)} rel="noreferrer" target="_blank">참여 영수증</a></dd>
           <dt>Campaign 2</dt><dd><a href={transactionUrl(wadangRelease.transactions.cancelCampaign2)} rel="noreferrer" target="_blank">운영자 취소 영수증</a></dd>

@@ -7,6 +7,9 @@ WADANG은 Dojang의 지갑 검증 결과에 기간, 정원, 지갑당 한 번의
 
 캠페인은 이 구조를 보여주는 첫 사용 사례입니다. 운영자는 마당을 열고 공유 링크를 만들며, 참여자는 Playground 테스트 인증을 확인받은 뒤 입장합니다.
 
+- 작동 앱: [wadang.jeonsavvy.workers.dev](https://wadang.jeonsavvy.workers.dev)
+- GASOK 제출자료: [wadang.jeonsavvy.workers.dev/gasok](https://wadang.jeonsavvy.workers.dev/gasok)
+
 ## 역할
 
 - **Dojang:** 지갑의 검증 정보를 제공합니다.

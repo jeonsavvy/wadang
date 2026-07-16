@@ -75,7 +75,7 @@ export default function DeckPage() {
           <div className="deck-tag">WORKING TESTNET MVP</div>
           <h2>규칙 생성부터 접근 자격 확인까지<br /><em>GIWA Sepolia에서 실행했습니다.</em></h2>
           <div className="deck-demo-frame">
-            <div className="deck-browser"><span /><span /><span /><b>WADANG · GIWA SEPOLIA · MADANG 1</b></div>
+            <div className="deck-browser"><span /><span /><span /><b>wadang.jeonsavvy.workers.dev/madang/1</b></div>
             <div className="deck-demo-card"><small>MADANG · DOJANG CHECK</small><BadgeCheck /><h3>TESTNET CONTRACT CONNECTED</h3><p>{wadangAddress}</p><button>입장 완료 · isEligible true</button></div>
             <div className="deck-evidence"><strong>VERIFIED ONCHAIN</strong><span>Campaign 1 · create + claim</span><span>Campaign 2 · create + cancel</span><span>14 contract scenarios</span><span>Source · {wadangRelease.sourceCommit.slice(0, 8)}</span></div>
           </div>
