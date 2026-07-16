@@ -480,7 +480,62 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   .profile-sheet { width: calc(100% - 24px); min-height: auto; padding: 24px; }
   .profile-hero, .profile-grid { grid-template-columns: 1fr; }
   .profile-photo { width: 125px; }
-  .deck-slide { --dw: calc(100vw - 24px); }
+  .deck-page { padding: 20px 0; }
+  .deck-slide { --dw: calc(100vw - 24px); min-height: 620px; aspect-ratio: auto; margin-bottom: 24px; padding: 76px 24px 58px; }
+  .deck-slide h2 { margin: 12px 0 24px; font-size: 30px; }
+  .deck-logo { font-size: 8px; }
+  .deck-tag { font-size: 7px; }
+  .deck-number { font-size: 8px; }
+  .deck-cover { min-height: 600px; padding-top: 90px; }
+  .deck-cover h1 { margin-top: 18px; font-size: 39px; }
+  .deck-cover > p { font-size: 12px; line-height: 1.65; }
+  .deck-triad { left: 24px; right: 24px; bottom: 55px; flex-wrap: wrap; gap: 12px; }
+  .deck-triad span { font-size: 8px; }
+  .deck-seal { right: 20px; bottom: 100px; }
+  .deck-seal .wadang-mark { width: 88px; height: 88px; }
+  .deck-problem, .deck-insight, .deck-product, .deck-demo, .deck-architecture, .deck-market, .deck-roadmap, .deck-team { padding-top: 76px; }
+  .deck-three, .deck-market-grid, .deck-two, .deck-team-grid { grid-template-columns: 1fr; }
+  .deck-three article, .deck-market-grid article { min-height: 0; max-height: none; padding: 15px; }
+  .deck-three h3, .deck-market-grid h3, .deck-two h3 { margin: 10px 0 5px; font-size: 18px; }
+  .deck-three p, .deck-market-grid p { font-size: 9px; }
+  .deck-flow { grid-template-columns: 1fr; gap: 8px; }
+  .deck-flow > div { min-height: 105px; padding: 16px; }
+  .deck-flow > b { display: none; }
+  .deck-flow strong { font-size: 10px; }
+  .deck-quote { font-size: 13px; }
+  .deck-title-row > svg { display: none; }
+  .deck-two article { padding: 13px 0; }
+  .deck-two ol { columns: 1; font-size: 9px; }
+  .deck-demo { min-height: 700px; }
+  .deck-demo-frame { height: auto; min-height: 390px; padding: 70px 14px 16px; display: block; }
+  .deck-demo-card { width: 100%; padding: 18px; }
+  .deck-demo-card h3 { font-size: 18px; }
+  .deck-demo-card p, .deck-demo-card button { font-size: 8px; }
+  .deck-evidence { position: static; width: 100%; margin-top: 13px; padding: 13px; gap: 7px; }
+  .deck-evidence strong, .deck-evidence span, .deck-footnote { font-size: 7px; }
+  .deck-architecture { min-height: 650px; }
+  .deck-architecture-map { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .deck-architecture-map > div { min-height: 115px; padding: 13px; }
+  .deck-architecture-map strong { font-size: 9px; }
+  .deck-boundaries { flex-wrap: wrap; gap: 7px; }
+  .deck-boundaries span { font-size: 7px; }
+  .deck-market { min-height: 700px; }
+  .deck-honesty { font-size: 8px; }
+  .deck-roadmap { min-height: 720px; }
+  .deck-kpis { grid-template-columns: 1fr 1fr; }
+  .deck-kpis > div:nth-child(2) { border-right: 0; }
+  .deck-kpis > div:nth-child(-n+2) { border-bottom: 1px solid var(--ink); }
+  .deck-kpis strong { font-size: 34px; }
+  .deck-kpis span { font-size: 8px; }
+  .deck-timeline { grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }
+  .deck-timeline strong { font-size: 11px; }
+  .deck-timeline p { font-size: 8px; }
+  .deck-team { min-height: 760px; }
+  .deck-team-grid { gap: 24px; }
+  .deck-team-grid > div:first-child > p { font-size: 9px; }
+  .deck-proof-list span, .deck-ask small, .deck-ask p { font-size: 7px; }
+  .deck-ask { padding: 20px; }
+  .deck-ask h3 { font-size: 17px; }
   .artifact-toolbar { width: calc(100% - 24px); }
 }
 
