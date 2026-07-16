@@ -1,6 +1,6 @@
 # WADANG · 와당
 
-**Dojang 검증을 참여와 접근 자격으로 연결하는 온체인 마당**  
+**Dojang 검증을 참여와 접근 자격으로 연결하는 온체인 마당**
 GASOK Track 03 · GIWA-NATIVE IDEAS 출품작
 
 WADANG은 Dojang의 지갑 검증 결과에 기간, 정원, 지갑당 한 번의 참여 규칙을 더합니다. 참여 결과는 GIWA에 기록되며, 다른 앱은 `isEligible`을 호출해 해당 지갑의 현재 접근 자격을 확인할 수 있습니다.
