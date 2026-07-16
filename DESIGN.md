@@ -1,41 +1,28 @@
-# WADANG design direction
+# WADANG 디자인 원칙
 
-## Product character
+## 방향
 
-WADANG is a contemporary Korean product surface, not a folk-theme decoration. The name connects GIWA's roof-tile philosophy, Dojang's verification seal, and the visible end tile at the eaves. The visual system translates overlap, curve, paper, porcelain, celadon, mugwort, and seokganju into structure and interaction.
+WADANG은 전통 문양을 그대로 옮기기보다 기와의 겹침, 처마의 곡선, 와당의 원형 인장을 현대적인 제품 화면으로 바꿉니다. 한지와 백자에서 가져온 밝은 바탕에 먹색, 석간주 적색, 청자·쑥색을 사용합니다.
 
-## Visual contract
+## 시각 요소
 
-- Korean-first copy with compact English technical labels.
-- Hanji/porcelain paper, ink black, seokganju red, celadon/mugwort green, restrained brass.
-- Original circular WADANG rosette; never copy GIWA logos or heritage-object patterns.
-- No flag, taegeuk, hanbok, brush-lettering, palace-photo, or ornamental overload.
-- Serif Korean display type for hierarchy; plain sans-serif for product actions and data.
-- Verification success stamps the WADANG seal once; `prefers-reduced-motion` disables the motion.
+- 자체 제작한 원형 와당 심벌
+- 정보 구조를 나누는 얇은 먹색 선
+- 기와가 겹치는 리듬을 적용한 카드와 그리드
+- 제목에는 명조 계열, 본문과 인터페이스에는 고딕 계열 사용
+- 인증 성공 시 와당 인장이 찍히는 짧은 움직임
+- `prefers-reduced-motion` 환경에서는 인증 움직임 생략
 
-## Interaction contract
+## 문장과 용어
 
-- Product terms: `마당 열기`, `도장 확인`, `입장하기`, `입장 기록`, `열린 마당`, `마당 닫기`.
-- Every wallet action exposes prerequisite, request, pending, receipt, and recovery.
-- Chain, contract, verifier source, and Explorer destination stay visible.
-- Status is expressed with text and icons, not color alone.
-- Minimum touch target 44px and visible keyboard focus.
-- Production never displays local sample metrics.
+- 브랜드 동작명은 `마당 열기`, `입장하기`, `마당 닫기`를 사용합니다.
+- 설명문에서는 `캠페인 생성`, `참여`, `참여 기록`으로 기능을 분명히 풉니다.
+- 짧은 문장으로 현재 상태와 다음 행동을 안내합니다.
+- 전통성은 장식 문구보다 색, 비례, 여백과 반복 구조로 표현합니다.
 
-## Copy contract
+## 화면 원칙
 
-- 첫 화면에서 `누가`, `무엇을`, `어떻게`, `어떤 결과를 얻는지`를 평문으로 설명한다.
-- `마당 열기`, `입장하기`는 브랜드화된 동작명으로만 사용하고, 본문에서는 `캠페인 생성`, `참여`, `참여 기록`으로 뜻을 풀어 쓴다.
-- 와당·기와·도장 비유는 이름과 시각 요소에만 제한한다. 기능 설명을 비유로 대신하지 않는다.
-- `primitive`, `surface`, `gate`, `release evidence` 같은 내부·업계 표현은 공개 카피에서 피하거나 바로 한국어로 설명한다.
-- 증거가 없다는 방어적 문구보다 현재 상태와 다음 확인 항목을 구체적으로 쓴다.
-
-## Responsive and print targets
-
-- Desktop web: 1440 × 1000.
-- Mobile web: 390 × 844.
-- Pitch: 13.333 × 7.5 inch, nine pages.
-- Profile: A4, one page, original portrait proportions with CSS crop only.
-- Technical PDF: A4 multi-page.
-
-Inspect rendered pixels for overlap, clipping, overflow, font fallback, contrast, unsafe margins, and unintended photo crop before publication.
+- 핵심 행동은 화면마다 하나만 강조합니다.
+- 지갑, 네트워크, 인증, 트랜잭션 상태를 서로 구분합니다.
+- 오류 문구는 원인과 다음 행동을 함께 보여줍니다.
+- 모바일에서도 주소, 트랜잭션 해시와 긴 한국어 문장이 화면을 넘지 않게 합니다.

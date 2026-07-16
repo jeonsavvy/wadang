@@ -75,7 +75,7 @@ export default function DocsPage() {
 if (!wadang.isEligible(campaignId, msg.sender)) {
     revert AccessDenied();
 }`}</code></pre>
-        <p className="docs-copy"><strong>현재 한계:</strong> MVP는 하나의 immutable verifier·attester 조합과 캠페인 참여 이력만 사용합니다. 여러 인증 조건, SDK·위젯, Wallet 안의 발견 화면과 실제 멤버십 발급은 구현 완료가 아니라 선발 후 검증할 확장 범위입니다.</p>
+        <p className="docs-copy"><strong>v0.1 범위:</strong> 하나의 immutable verifier·attester 조합과 캠페인 참여 이력을 사용합니다. 파일럿에서는 여러 인증 조건, SDK·위젯과 Wallet 안의 발견 흐름 가운데 우선순위를 확인합니다.</p>
       </section>
 
       <section className="docs-section">

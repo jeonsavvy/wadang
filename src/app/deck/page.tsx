@@ -105,7 +105,7 @@ export default function DeckPage() {
             <article><span>02 · PRODUCT</span><h3>자격 정책과 SDK</h3><p>여러 Dojang 인증을 조합하고 외부 서비스가 붙일 위젯과 SDK를 제공합니다.</p></article>
             <article><span>03 · SCALE</span><h3>Wallet 참여·접근 계층</h3><p>GIWA Wallet에서 발견한 마당의 자격을 여러 앱의 접근과 멤버십으로 연결합니다.</p></article>
           </div>
-          <p className="deck-honesty"><strong>사업모델 가설:</strong> 운영자 구독 · 검증 참여 건별 요금 · SDK/API 요금 — 파일럿 전에는 매출이나 수요를 주장하지 않습니다.</p>
+          <p className="deck-honesty"><strong>사업모델 가설:</strong> 운영자 구독 · 검증 참여 건별 요금 · SDK/API 요금 — 파일럿에서 반복 사용과 지불 의사를 확인합니다.</p>
         </DeckChrome>
       </section>
 
