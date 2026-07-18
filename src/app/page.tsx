@@ -17,17 +17,17 @@ export default function Home() {
     <main>
       <section className="hero container">
         <div className="hero-copy">
-          <div className="eyebrow">DOJANG-BASED ACCESS · GASOK TRACK 03</div>
+          <div className="eyebrow">GIWA SEPOLIA · GASOK TRACK 03</div>
           <h1>
-            검증된 지갑의
+            Dojang 인증 지갑만
             <br />
-            참여와 접근을
+            참여하는 온체인
             <br />
-            잇는 <em>마당</em>
+            <em>마당</em>
           </h1>
           <p className="hero-lede">
-            WADANG은 Dojang 검증을 기간·정원·중복 규칙과 연결합니다.
-            참여 결과는 GIWA에 남고, 다른 앱이 현재 접근 자격으로 다시 확인할 수 있습니다.
+            운영자는 기간과 정원을 정해 마당을 열고, Dojang 인증 지갑은
+            한 번만 참여합니다. 참여 기록은 GIWA Sepolia에 남습니다.
           </p>
           <div className="hero-actions">
             <Link className="button button-accent button-large" href="/open">
@@ -41,7 +41,7 @@ export default function Home() {
             <StatusPill tone={wadangAddress ? "live" : "preview"}>
               {wadangAddress ? "GIWA Sepolia" : "LOCAL PREVIEW"}
             </StatusPill>
-            <span>PARTICIPATION RULES · REUSABLE ELIGIBILITY</span>
+            <span>지갑당 한 번 · 기간과 정원 · 공개 영수증</span>
           </div>
         </div>
 
@@ -55,13 +55,13 @@ export default function Home() {
               <BadgeCheck size={22} />
             </div>
             <div>
-              <small>FIRST USE CASE · CAMPAIGN</small>
-              <h2>첫 번째 마당</h2>
-              <p>테스트 인증 지갑이 한 번 참여하고 접근 자격을 남깁니다</p>
+              <small>GIWA SEPOLIA · MADANG #001</small>
+              <h2>테스트넷 입장</h2>
+              <p>Dojang 테스트 인증과 참여 기록을 확인하는 공개 마당</p>
             </div>
             <div className="madang-pass-bottom">
-              <span>1 WALLET · 1 ENTRY</span>
-              <span>INSPECTABLE RECEIPT</span>
+              <span>지갑당 한 번</span>
+              <span>Explorer 영수증</span>
             </div>
           </article>
           <WadangStamp />
@@ -72,77 +72,64 @@ export default function Home() {
         <div className="container proof-grid">
           <div>
             <span className="section-number">一</span>
-            <h3>Dojang이 검증 정보를 제공합니다</h3>
-            <p>참여 시점에 컨트랙트가 GIWA OnchainVerifier를 직접 조회합니다.</p>
+            <h3>Dojang 상태 조회</h3>
+            <p>참여 버튼을 누르면 컨트랙트가 OnchainVerifier에서 현재 인증을 확인합니다.</p>
           </div>
           <div>
             <span className="section-number">二</span>
-            <h3>WADANG이 참여 규칙을 적용합니다</h3>
-            <p>기간·정원·지갑당 한 번의 참여를 컨트랙트가 일관되게 처리합니다.</p>
+            <h3>기간·정원·중복 검사</h3>
+            <p>시작과 종료 시각, 남은 정원과 이 지갑의 기존 참여 기록을 검사합니다.</p>
           </div>
           <div>
             <span className="section-number">三</span>
-            <h3>다른 앱이 접근 자격을 확인합니다</h3>
-            <p><code>isEligible</code>로 참여 기록, 마당 상태와 조회 시점의 인증을 함께 확인합니다.</p>
+            <h3>GIWA에 참여 기록</h3>
+            <p>조건을 통과한 지갑의 참여와 영수증을 GIWA Sepolia에 기록합니다.</p>
           </div>
         </div>
-      </section>
-
-      <section className="container story-section">
-        <div className="story-mark"><WadangMark size={90} /></div>
-        <div>
-          <span className="eyebrow">GIWA · DOJANG · WADANG</span>
-          <h2>Dojang 검증을 참여와<br />이후 접근 자격에 연결합니다.</h2>
-        </div>
-        <p>
-          Dojang은 지갑의 검증 정보를 제공하고, WADANG은 그 정보를 참여 규칙과 기록으로 연결합니다.
-          캠페인은 이 구조를 검증하는 첫 사용 사례이며, 다른 서비스는 참여 결과와 현재 인증을 함께 확인할 수 있습니다.
-          이름과 시각 요소는 기와 끝을 마감하는 와당에서 가져왔습니다.
-        </p>
       </section>
 
       <section className="container journey-section">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">ONE CONTRACT · TWO JOURNEYS</span>
-            <h2>운영자는 참여 규칙을 만들고,<br />사용자는 인증 후 입장합니다.</h2>
+            <span className="eyebrow">운영자와 참여자</span>
+            <h2>마당을 열고,<br />인증 지갑이 입장합니다.</h2>
           </div>
-          <Link className="text-link" href="/manage">온체인 현황 보기 ↗</Link>
+          <Link className="text-link" href="/madang/1">테스트넷 마당 보기 ↗</Link>
         </div>
         <div className="journey-grid">
           <article className="journey-card organizer-card">
-            <span className="journey-role">FOR ORGANIZERS · 운영자</span>
+            <span className="journey-role">운영자</span>
             <Blocks size={32} />
             <h3>마당 열기</h3>
             <ol>
-              <li><span>01</span>GIWA Sepolia 지갑 연결</li>
-              <li><span>02</span>기간·정원·안내문 설정</li>
-              <li><span>03</span>공유 링크와 참여 현황 확인</li>
+              <li><span>01</span>운영자 지갑 연결</li>
+              <li><span>02</span>기간·정원·안내문 입력</li>
+              <li><span>03</span>트랜잭션 확인 후 링크 공유</li>
             </ol>
             <Link href="/open">운영자 흐름 시작 <ArrowRight size={15} /></Link>
           </article>
           <article className="journey-card participant-card">
-            <span className="journey-role">FOR PARTICIPANTS · 참여자</span>
+            <span className="journey-role">참여자</span>
             <DatabaseZap size={32} />
             <h3>입장하기</h3>
             <ol>
               <li><span>01</span>Dojang 테스트 인증 지갑 연결</li>
-              <li><span>02</span>Playground 인증 상태 확인</li>
-              <li><span>03</span>한 번 참여하고 영수증 확인</li>
+              <li><span>02</span>현재 인증과 캠페인 상태 확인</li>
+              <li><span>03</span>입장 후 Explorer 영수증 확인</li>
             </ol>
             <Link href="/docs">참여 규칙 보기 <ArrowRight size={15} /></Link>
           </article>
         </div>
       </section>
 
-      <section className="container final-cta">
+      <section className="container final-cta evidence-cta">
         <ShieldCheck size={34} />
         <div>
-          <span className="eyebrow">FIRST USE CASE · CAMPAIGN</span>
-          <h2>기간과 정원을 설정해 첫 참여 마당을 열어 보세요.</h2>
+          <span className="eyebrow">외부 앱 연동</span>
+          <h2><code>isEligible</code>로 참여 이력과 현재 인증을 함께 조회합니다.</h2>
         </div>
-        <Link className="button button-dark button-large" href="/open">
-          첫 마당 열기 <CircleCheckBig size={17} />
+        <Link className="button button-dark button-large" href="/docs#integration">
+          연동 코드 보기 <CircleCheckBig size={17} />
         </Link>
       </section>
     </main>

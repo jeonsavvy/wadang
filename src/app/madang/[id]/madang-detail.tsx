@@ -41,12 +41,12 @@ import {
 import { useCurrentUnixTime } from "@/lib/use-current-unix-time";
 
 const actionLabels = {
-  connect: "지갑을 먼저 연결해 주세요",
-  "switch-network": "GIWA Sepolia로 전환해 주세요",
-  unavailable: "참여 조건을 충족하지 못했습니다",
-  verify: "Dojang 인증이 필요합니다",
+  connect: "지갑 연결 필요",
+  "switch-network": "네트워크 전환 필요",
+  unavailable: "현재 입장할 수 없음",
+  verify: "Dojang 인증 필요",
   claim: "입장하기",
-  receipt: "참여 기록 완료",
+  receipt: "입장 완료",
 } as const;
 
 export function MadangDetail({ id }: { id: string }) {
@@ -161,43 +161,47 @@ export function MadangDetail({ id }: { id: string }) {
       {campaignRead.error && <div className="error-box">마당을 읽지 못했습니다. 공유 ID와 GIWA RPC 상태를 확인해 주세요.</div>}
       {campaign && (
         <>
-          <section className="campaign-hero">
-            <div>
+          <section className="campaign-hero campaign-overview">
+            <div className="campaign-overview-main">
               <div className="campaign-kicker">
-                <span>MADANG #{String(id).padStart(3, "0")}</span>
+                <span>마당 #{String(id).padStart(3, "0")}</span>
                 {phase && <StatusPill tone={phase}>{phaseLabels[phase]}</StatusPill>}
               </div>
               <h1>{campaign.title}</h1>
               <p>{campaign.details || "운영자가 공개 안내문을 남기지 않았습니다."}</p>
-              <div className="campaign-owner">운영자 <code>{shortenAddress(getAddress(campaign.organizer), 7)}</code></div>
+              <dl className="campaign-meta">
+                <div><dt>종료</dt><dd>{formatDate(campaign.endsAt)}</dd></div>
+                <div><dt>운영자</dt><dd><code>{shortenAddress(getAddress(campaign.organizer), 7)}</code></dd></div>
+              </dl>
             </div>
-              <div className="claim-meter">
-              <span>ONCHAIN ENTRIES · 참여 기록</span>
+            <div className="claim-meter">
+              <span>현재 참여</span>
               <strong>{campaign.claimCount}<small> / {campaign.capacity}</small></strong>
               <div><i style={{ width: `${Math.min(100, (campaign.claimCount / campaign.capacity) * 100)}%` }} /></div>
               <p>{Math.max(0, campaign.capacity - campaign.claimCount)}명 참여 가능</p>
+              <div className="current-step"><small>내 상태</small><b>{actionLabels[step]}</b></div>
             </div>
           </section>
 
           <section className="claim-grid">
             <div className="panel claim-panel">
-              <div className="panel-head"><div><span className="eyebrow">ENTRY CHECK</span><h2>도장 확인</h2></div><ShieldQuestion size={22} /></div>
+              <div className="panel-head"><div><span className="product-kicker">참여 조건</span><h2>도장 확인</h2></div><ShieldQuestion size={22} /></div>
               <div className="panel-body">
                 <div className="check-list">
-                  <CheckRow ok={isConnected} label="지갑 연결" detail={address ? shortenAddress(address, 7) : "상단의 지갑 연결 버튼을 사용하세요"} />
-                  <CheckRow ok={chainId === giwaSepolia.id} label="GIWA Sepolia" detail={chainId === giwaSepolia.id ? "Chain ID 91342" : "상단에서 네트워크를 전환하세요"} />
-              <CheckRow ok={isVerified === true} pending={isConnected && verificationRead.isLoading} label="Dojang 인증 상태" detail={isVerified ? "인증 확인됨" : "인증 정보를 찾지 못했습니다"} />
-                  <CheckRow ok={hasClaimed} label="참여 기록" detail={hasClaimed ? "이미 이 캠페인에 참여했습니다" : "이 지갑의 참여 기록이 없습니다"} neutral={!hasClaimed} />
+                  <CheckRow ok={isConnected} label="지갑" detail={address ? shortenAddress(address, 7) : "미연결"} />
+                  <CheckRow ok={chainId === giwaSepolia.id} label="네트워크" detail={chainId === giwaSepolia.id ? "GIWA Sepolia · 91342" : isConnected ? "GIWA Sepolia로 전환 필요" : "지갑 연결 후 확인"} />
+                  <CheckRow ok={isVerified === true} pending={isConnected && verificationRead.isLoading} label="Dojang" detail={isVerified ? "테스트 인증 확인" : isConnected ? "인증을 확인하지 못함" : "지갑 연결 후 조회"} />
+                  <CheckRow ok={hasClaimed} label="참여" detail={hasClaimed ? "입장 기록 있음" : "참여 전"} neutral={!hasClaimed} />
                 </div>
 
-                {verificationRead.error && <div className="error-box">Dojang 확인 중 RPC 또는 verifier 오류가 발생했습니다. 실패를 미인증으로 간주하지 않고 다시 확인해야 합니다.</div>}
+                {verificationRead.error && <div className="error-box">Dojang 상태를 읽지 못했습니다. 네트워크 연결을 확인한 뒤 다시 조회해 주세요.</div>}
                 {isVerified === false && (
-                  <div className="error-box">현재 Dojang 인증을 확인할 수 없습니다. <a href={playgroundUrl} rel="noreferrer" target="_blank">GIWA Playground 안내 <ExternalLink size={12} /></a></div>
+                  <div className="error-box">이 지갑의 테스트 인증을 찾지 못했습니다. <a href={playgroundUrl} rel="noreferrer" target="_blank">GIWA Playground 확인 <ExternalLink size={12} /></a></div>
                 )}
-                {hasClaimed && !claimReceipt.isSuccess && <div className="notice compact-notice"><CircleAlert size={17} /><div><strong>중복 참여 차단</strong>지갑당 한 번만 참여할 수 있으므로 추가 요청을 보내지 않습니다.</div></div>}
+                {hasClaimed && !claimReceipt.isSuccess && <div className="notice compact-notice"><CircleAlert size={17} /><div><strong>이미 입장한 지갑입니다</strong>Explorer에서 기존 참여 기록을 확인할 수 있습니다.</div></div>}
                 {(claimWrite.error || claimReceipt.error) && <div className="error-box" role="alert">{formatContractError(claimWrite.error ?? claimReceipt.error)}</div>}
                 {claimReceipt.isSuccess && claimWrite.data && (
-                  <div className="receipt-card compact-receipt"><WadangStamp label="ENTRY RECORDED" /><div><strong>참여가 기록되었습니다.</strong><p>컨트랙트가 현재 인증 상태를 확인하고 참여 기록을 남겼습니다.</p><a className="text-link" href={`${explorerUrl}/tx/${claimWrite.data}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a></div></div>
+                  <div className="receipt-card compact-receipt"><WadangStamp label="ENTRY RECORDED" /><div><strong>입장이 기록되었습니다.</strong><p>이 지갑의 Dojang 인증과 참여 결과가 GIWA Sepolia에서 확인됩니다.</p><a className="text-link" href={`${explorerUrl}/tx/${claimWrite.data}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a></div></div>
                 )}
 
                 <button className="button button-accent button-large claim-button" disabled={!wadangAddress || step !== "claim" || claimPending} onClick={claim} type="button">
@@ -208,7 +212,7 @@ export function MadangDetail({ id }: { id: string }) {
             </div>
 
             <aside className="rule-card">
-              <span className="eyebrow">RULES ONCHAIN · 마당 규칙</span>
+              <span className="product-kicker">마당 규칙</span>
               <dl>
                 <div><dt>문 여는 시각</dt><dd>{formatDate(campaign.startsAt)}</dd></div>
                 <div><dt>문 닫는 시각</dt><dd>{formatDate(campaign.endsAt)}</dd></div>
@@ -226,7 +230,7 @@ export function MadangDetail({ id }: { id: string }) {
           </section>
         </>
       )}
-      <div className="back-row"><Link className="text-link" href="/manage">← 열린 마당으로</Link></div>
+      <div className="back-row"><Link className="text-link" href="/manage">← 내 마당으로</Link></div>
     </main>
   );
 }

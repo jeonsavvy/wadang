@@ -92,79 +92,90 @@ export function OpenMadangForm() {
   const visibleError = formError ?? (error ? formatContractError(error) : undefined);
 
   return (
-    <section className="panel form-panel">
-      <div className="panel-head">
-        <div>
-          <span className="eyebrow">ONCHAIN RULES</span>
-          <h2>마당 규칙</h2>
-        </div>
-        <span className="status-pill status-neutral">GIWA Sepolia · 자금 없음</span>
-      </div>
-      <div className="panel-body">
-        {prerequisite && (
-          <div className="notice">
-            <CircleAlert size={19} />
-            <div><strong>캠페인 생성 준비가 필요합니다</strong>{prerequisite}</div>
-          </div>
-        )}
+    <section>
+      <div className="create-layout">
+        <form className="form-surface" onSubmit={onSubmit}>
+          {prerequisite && (
+            <div className="notice">
+              <CircleAlert size={19} />
+              <div><strong>생성 전 확인</strong>{prerequisite}</div>
+            </div>
+          )}
 
-        <form onSubmit={onSubmit}>
-          <div className="form-grid">
-            <div className="field field-full">
-              <label htmlFor="title">캠페인 이름 <span>{utf8ByteLength(title)} / {TITLE_MAX_BYTES} bytes</span></label>
-              <input id="title" name="title" onChange={(event) => setTitle(event.target.value)} placeholder="GIWA 커뮤니티 얼리 액세스" required value={title} />
+          <section className="form-block">
+            <header><span>01</span><div><h2>기본 정보</h2><p>공유 화면에 표시할 이름과 참여 안내문입니다.</p></div></header>
+            <div className="form-grid">
+              <div className="field field-full">
+                <label htmlFor="title">캠페인 이름 <span>UTF-8 {utf8ByteLength(title)} / {TITLE_MAX_BYTES}</span></label>
+                <input id="title" name="title" onChange={(event) => setTitle(event.target.value)} placeholder="GIWA 커뮤니티 얼리 액세스" required value={title} />
+              </div>
+              <div className="field field-full">
+                <label htmlFor="details">참여자 안내문 <span>UTF-8 {utf8ByteLength(details)} / {DETAILS_MAX_BYTES}</span></label>
+                <textarea id="details" name="details" onChange={(event) => setDetails(event.target.value)} placeholder="참여 대상과 참여 후 확인할 내용을 적어 주세요." value={details} />
+              </div>
             </div>
-            <div className="field field-full">
-              <label htmlFor="details">참여자 안내문 <span>{utf8ByteLength(details)} / {DETAILS_MAX_BYTES} bytes</span></label>
-              <textarea id="details" name="details" onChange={(event) => setDetails(event.target.value)} placeholder="캠페인 대상과 참여 후 제공되는 안내 또는 혜택을 적어 주세요." value={details} />
+          </section>
+
+          <section className="form-block">
+            <header><span>02</span><div><h2>기간과 정원</h2><p>시작 시각은 포함하고 종료 시각부터 입장을 닫습니다.</p></div></header>
+            <div className="form-grid schedule-grid">
+              <div className="field">
+                <label htmlFor="startsAt">시작 시각 <span>내 기기 시간</span></label>
+                <input id="startsAt" name="startsAt" onChange={(event) => setStartsAt(event.target.value)} type="datetime-local" value={startsAt} required />
+              </div>
+              <div className="field">
+                <label htmlFor="endsAt">종료 시각 <span>내 기기 시간</span></label>
+                <input id="endsAt" name="endsAt" onChange={(event) => setEndsAt(event.target.value)} type="datetime-local" value={endsAt} required />
+              </div>
+              <div className="field">
+                <label htmlFor="capacity">최대 참여 수 <span>1–10,000</span></label>
+                <input defaultValue="100" id="capacity" max="10000" min="1" name="capacity" type="number" required />
+              </div>
             </div>
-            <div className="field">
-              <label htmlFor="startsAt">문 여는 시각 <span>내 기기 시간</span></label>
-              <input id="startsAt" name="startsAt" onChange={(event) => setStartsAt(event.target.value)} type="datetime-local" value={startsAt} required />
-            </div>
-            <div className="field">
-              <label htmlFor="endsAt">문 닫는 시각 <span>내 기기 시간</span></label>
-              <input id="endsAt" name="endsAt" onChange={(event) => setEndsAt(event.target.value)} type="datetime-local" value={endsAt} required />
-            </div>
-            <div className="field">
-              <label htmlFor="capacity">최대 참여 수 <span>1–10,000</span></label>
-              <input defaultValue="100" id="capacity" max="10000" min="1" name="capacity" type="number" required />
-            </div>
-            <div className="config-item">
-              <span>운영자 지갑</span>
-              <code>{address ?? "지갑을 연결해 주세요"}</code>
-            </div>
-          </div>
+          </section>
+
+          {visibleError && <div className="error-box" role="alert">{visibleError}</div>}
 
           <div className="form-actions">
-            <p>생성된 캠페인은 삭제할 수 없습니다. 잘못 만든 경우 닫힘 상태로 변경할 수 있습니다.</p>
+            <p><strong>생성 후 삭제할 수 없습니다.</strong> 입력을 잘못한 경우 운영자 지갑으로 마당을 닫을 수 있습니다.</p>
             <button className="button button-accent button-large" disabled={Boolean(prerequisite) || isPending || receipt.isLoading} type="submit">
               {isPending || receipt.isLoading ? <LoaderCircle className="spin" size={17} /> : <LockKeyhole size={17} />}
-              {isPending ? "지갑에서 확인" : receipt.isLoading ? "마당 기록 중" : "마당 열기"}
+              {isPending ? "지갑에서 확인" : receipt.isLoading ? "GIWA에 기록 중" : "마당 만들기"}
             </button>
           </div>
         </form>
 
-        {visibleError && <div className="error-box" role="alert">{visibleError}</div>}
-        {receipt.isSuccess && hash && (
-          <div className="receipt-card" role="status">
-            <WadangStamp label="MADANG OPEN" />
-            <div>
-              <strong>캠페인이 GIWA Sepolia에 기록되었습니다.</strong>
-              {sharePath ? (
-                <>
-                  <p>공유 링크 <code>{sharePath}</code></p>
-                  <div className="receipt-actions">
-                    <Link className="button button-dark" href={sharePath}>공유 화면 열기 <ExternalLink size={14} /></Link>
-                    <button className="button button-light" onClick={copyShareLink} type="button"><Copy size={14} />{copied ? "복사됨" : "링크 복사"}</button>
-                  </div>
-                </>
-              ) : <p>트랜잭션은 확정됐지만 캠페인 ID를 읽지 못했습니다. 열린 마당에서 다시 확인해 주세요.</p>}
-              <a className="text-link" href={`${explorerUrl}/tx/${hash}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a>
-            </div>
-          </div>
-        )}
+        <aside className="creation-summary">
+          <div><span className="product-kicker">온체인 확인</span><h2>이번 마당의 조건</h2></div>
+          <dl>
+            <div><dt>네트워크</dt><dd>{chainId === giwaSepolia.id ? "GIWA Sepolia" : isConnected ? "전환 필요" : "지갑 미연결"}</dd></div>
+            <div><dt>운영자</dt><dd><code>{address ?? "연결 전"}</code></dd></div>
+            <div><dt>참여 제한</dt><dd>지갑당 한 번</dd></div>
+            <div><dt>인증 기준</dt><dd>Dojang 테스트 인증</dd></div>
+            <div><dt>가치 전송</dt><dd>없음</dd></div>
+          </dl>
+          <p>캠페인 정보와 참여 기록은 공개 컨트랙트에서 누구나 확인할 수 있습니다.</p>
+        </aside>
       </div>
+
+      {receipt.isSuccess && hash && (
+        <div className="receipt-card create-receipt" role="status">
+          <WadangStamp label="MADANG OPEN" />
+          <div>
+            <strong>마당이 GIWA Sepolia에 기록되었습니다.</strong>
+            {sharePath ? (
+              <>
+                <p>공유 링크 <code>{sharePath}</code></p>
+                <div className="receipt-actions">
+                  <Link className="button button-dark" href={sharePath}>공유 화면 열기 <ExternalLink size={14} /></Link>
+                  <button className="button button-light" onClick={copyShareLink} type="button"><Copy size={14} />{copied ? "복사됨" : "링크 복사"}</button>
+                </div>
+              </>
+            ) : <p>트랜잭션은 확정됐지만 캠페인 ID를 읽지 못했습니다. 내 마당에서 다시 확인해 주세요.</p>}
+            <a className="text-link" href={`${explorerUrl}/tx/${hash}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

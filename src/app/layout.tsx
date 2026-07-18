@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s — WADANG",
   },
   description:
-    "Dojang 검증을 참여 규칙과 온체인 기록으로 연결하고, 다른 앱이 현재 접근 자격을 확인하게 하는 GIWA-native MVP.",
+    "기간과 정원을 정해 마당을 열고, Dojang 인증 지갑의 참여를 GIWA Sepolia에 기록하는 온체인 캠페인.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -25,7 +25,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <footer className="site-footer">
             <div>
               <strong>WADANG · 와당</strong>
-              <span>Dojang 검증을 참여와 접근 자격으로 연결하는 온체인 마당</span>
+              <span>Dojang 인증 지갑이 참여하는 GIWA 온체인 캠페인</span>
             </div>
             <div className="footer-links">
               <Link href="/gasok">GASOK 제출자료</Link>

@@ -12,7 +12,7 @@ export function SiteHeader() {
       </Link>
       <nav aria-label="Primary navigation">
         <Link href="/open">마당 열기</Link>
-        <Link href="/manage">열린 마당</Link>
+          <Link href="/manage">내 마당</Link>
         <Link href="/docs">기술문서</Link>
       </nav>
       <WalletButton />

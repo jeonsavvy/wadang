@@ -1,4 +1,4 @@
-import { mkdir } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import { chromium } from "@playwright/test";
@@ -20,6 +20,7 @@ const viewports = [
   ["mobile", { width: 390, height: 844 }],
 ];
 
+await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
 const browser = await chromium.launch({
   args: ["--disable-gpu", "--disable-software-rasterizer"],
