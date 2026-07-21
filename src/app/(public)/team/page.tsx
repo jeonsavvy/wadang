@@ -20,7 +20,7 @@ export default function TeamPage() {
             <p>Republic of Korea</p>
           </div>
           <div className="profile-photo">
-            <Image alt="전찬혁 증명사진" fill priority sizes="42mm" src="/team/jeon-chan-hyuk.png" />
+            <Image alt="전찬혁 증명사진" fill priority sizes="42mm" src="/team/jeon-chan-hyuk.png" unoptimized />
           </div>
         </section>
 

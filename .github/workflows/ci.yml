@@ -26,5 +26,6 @@ jobs:
       - run: pnpm test
       - run: pnpm test:contracts
       - run: pnpm build
+      - run: pnpm check:client-boundaries
       - run: pnpm test:e2e
       - run: pnpm build:cloudflare

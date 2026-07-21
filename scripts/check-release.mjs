@@ -45,6 +45,7 @@ const releaseAssets = [
     localPath: "public/team/jeon-chan-hyuk.png",
     contentType: "image/png",
     minimumBytes: 100_000,
+    maximumBytes: 500_000,
   },
 ];
 
@@ -76,6 +77,11 @@ async function fetchReleaseFile(item) {
       `${item.path}: expected at least ${item.minimumBytes} bytes, received ${bytes.byteLength}`,
     );
   }
+  if (item.maximumBytes && bytes.byteLength > item.maximumBytes) {
+    throw new Error(
+      `${item.path}: expected at most ${item.maximumBytes} bytes, received ${bytes.byteLength}`,
+    );
+  }
 
   return { bytes, contentType, status: response.status };
 }
@@ -97,6 +103,11 @@ for (const item of releaseAssets) {
     if (localBytes.byteLength < item.minimumBytes) {
       throw new Error(
         `${item.localPath}: expected at least ${item.minimumBytes} bytes, received ${localBytes.byteLength}`,
+      );
+    }
+    if (item.maximumBytes && localBytes.byteLength > item.maximumBytes) {
+      throw new Error(
+        `${item.localPath}: expected at most ${item.maximumBytes} bytes, received ${localBytes.byteLength}`,
       );
     }
 

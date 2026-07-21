@@ -94,7 +94,7 @@ export function OpenMadangForm() {
   return (
     <section>
       <div className="create-layout">
-        <form className="form-surface" onSubmit={onSubmit}>
+        <form autoComplete="off" className="form-surface" onSubmit={onSubmit}>
           {prerequisite && (
             <div className="notice">
               <CircleAlert size={19} />
@@ -107,11 +107,11 @@ export function OpenMadangForm() {
             <div className="form-grid">
               <div className="field field-full">
                 <label htmlFor="title">캠페인 이름 <span>UTF-8 {utf8ByteLength(title)} / {TITLE_MAX_BYTES}</span></label>
-                <input id="title" name="title" onChange={(event) => setTitle(event.target.value)} placeholder="GIWA 커뮤니티 얼리 액세스" required value={title} />
+                <input id="title" name="title" onChange={(event) => setTitle(event.target.value)} placeholder="예: GIWA 커뮤니티 얼리 액세스…" required value={title} />
               </div>
               <div className="field field-full">
                 <label htmlFor="details">참여자 안내문 <span>UTF-8 {utf8ByteLength(details)} / {DETAILS_MAX_BYTES}</span></label>
-                <textarea id="details" name="details" onChange={(event) => setDetails(event.target.value)} placeholder="참여 대상과 참여 후 확인할 내용을 적어 주세요." value={details} />
+                <textarea id="details" name="details" onChange={(event) => setDetails(event.target.value)} placeholder="예: 참여 대상과 입장 후 확인할 내용을 적어 주세요…" value={details} />
               </div>
             </div>
           </section>

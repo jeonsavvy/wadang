@@ -33,10 +33,13 @@ body {
 
 a { color: inherit; text-decoration: none; }
 button, input, textarea { font: inherit; }
-button, summary { -webkit-tap-highlight-color: transparent; }
+a, button, summary { -webkit-tap-highlight-color: rgba(162, 63, 47, .16); touch-action: manipulation; }
 code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhere; word-break: break-all; }
 .container { width: min(1180px, calc(100% - 48px)); margin-inline: auto; }
 .print-hidden { display: initial; }
+.content-root { min-width: 0; }
+.skip-link { position: fixed; z-index: 100; top: 10px; left: 10px; min-height: 44px; padding: 0 16px; border: 1px solid var(--ink); background: var(--porcelain); display: inline-flex; align-items: center; font-size: 13px; font-weight: 850; transform: translateY(calc(-100% - 20px)); transition: transform .15s ease; }
+.skip-link:focus-visible { transform: translateY(0); }
 
 .site-header {
   position: sticky;
@@ -80,7 +83,6 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   font-weight: 850;
   transition: transform .18s ease, background .18s ease, color .18s ease, opacity .18s ease;
 }
-.button:hover:not(:disabled) { transform: translateY(-2px); }
 .button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid rgba(162, 63, 47, .35); outline-offset: 3px; }
 .button:disabled { cursor: not-allowed; opacity: .48; }
 .button-dark { background: var(--ink); color: var(--porcelain); }
@@ -153,6 +155,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 .journey-card li span { color: var(--cinnabar); font-size: 9px; font-weight: 900; }
 .journey-card > a { margin-top: auto; display: flex; align-items: center; gap: 8px; color: var(--cinnabar-dark); font-size: 11px; font-weight: 900; }
 .final-cta { min-height: 230px; padding: 40px 48px; border: 1px solid var(--ink); background: var(--celadon); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 32px; }
+.final-cta .eyebrow { color: var(--ink); }
 .final-cta h2 { margin: 10px 0 0; max-width: 680px; font-family: "Noto Serif KR", "Batang", serif; font-size: 33px; line-height: 1.3; }
 
 .gasok-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); }
@@ -409,7 +412,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 .deck-demo-card > svg { float: right; }
 .deck-demo-card h3 { margin: 4% 0 2%; font-family: "Noto Serif KR", "Batang", serif; font-size: clamp(15px,1.8vw,28px); }
 .deck-demo-card p { margin: 0 0 3%; color: #c8d4ca; font-size: clamp(5px,.52vw,8px); overflow-wrap: anywhere; }
-.deck-demo-card button { width: 100%; padding: 3%; border: 0; background: var(--cinnabar); color: #fff; font-size: clamp(5px,.52vw,8px); font-weight: 900; }
+.deck-demo-result { width: 100%; padding: 3%; background: var(--cinnabar); color: #fff; display: block; font-size: clamp(5px,.52vw,8px); font-weight: 900; text-align: center; }
 .deck-evidence { position: absolute; right: 3%; top: 20%; width: 22%; padding: 1.4%; border: 1px solid var(--ink); background: var(--paper); display: grid; gap: .8vw; }
 .deck-evidence strong { font-size: clamp(4px,.5vw,8px); color: var(--cinnabar-dark); }
 .deck-evidence span { font-size: clamp(4px,.45vw,7px); }
@@ -484,6 +487,9 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
     --screen-micro: 10px;
     --screen-leading: 1.7;
   }
+
+  h1, h2, h3 { overflow-wrap: anywhere; word-break: keep-all; text-wrap: balance; }
+  .campaign-stats, .claim-meter, .gasok-release, .profile-entry { font-variant-numeric: tabular-nums; }
 
   .site-header nav { font-size: 14px; }
   .site-header nav a { min-height: 44px; display: inline-flex; align-items: center; }
@@ -575,7 +581,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   .deck-two ol { font-size: clamp(9px, .76vw, 12px); }
   .deck-browser b { font-size: clamp(7px, .58vw, 9px); }
   .deck-demo-card small { font-size: clamp(7px, .58vw, 9px); }
-  .deck-demo-card p, .deck-demo-card button { font-size: clamp(8px, .68vw, 10px); line-height: 1.5; }
+  .deck-demo-card p, .deck-demo-result { font-size: clamp(8px, .68vw, 10px); line-height: 1.5; }
   .deck-evidence strong, .deck-evidence span, .deck-footnote { font-size: clamp(7px, .58vw, 9px); line-height: 1.45; }
   .deck-architecture-map small { font-size: clamp(7px, .58vw, 9px); }
   .deck-architecture-map strong { font-size: clamp(9px, .82vw, 12px); }
@@ -596,6 +602,10 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   .profile-grid a { min-height: 32px; font-size: var(--screen-label); align-items: center; }
   .profile-entry > span { font-size: var(--screen-micro); }
   .profile-sheet footer { font-size: 9px; }
+}
+
+@media (hover: hover) {
+  .button:hover:not(:disabled) { transform: translateY(-2px); }
 }
 
 
@@ -641,9 +651,9 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   .product-page-head h1 { font-size: 40px; }
   .product-head-actions { width: 100%; justify-content: space-between; }
   .workspace { margin-top: 20px; }
-  .workspace-toolbar { align-items: flex-start; flex-direction: column; }
-  .filter-tabs { width: 100%; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
-  .filter-tabs button { flex: 0 0 auto; }
+  .workspace-toolbar { padding-inline: 12px; align-items: flex-start; flex-direction: column; }
+  .filter-tabs { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+  .filter-tabs button { width: 100%; min-width: 0; padding-inline: 6px; justify-content: center; gap: 5px; white-space: nowrap; }
   .workspace-body { padding-inline: 18px; }
   .campaign-row { grid-template-columns: 1fr; gap: 0; padding-bottom: 16px; }
   .campaign-row-primary { grid-template-columns: 40px minmax(0,1fr) 20px; gap: 12px; padding-bottom: 10px; }
@@ -721,7 +731,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   .deck-demo-frame { height: auto; min-height: 390px; padding: 70px 14px 16px; display: block; }
   .deck-demo-card { width: 100%; padding: 18px; }
   .deck-demo-card h3 { font-size: 18px; }
-  .deck-demo-card p, .deck-demo-card button { font-size: 8px; }
+  .deck-demo-card p, .deck-demo-result { font-size: 8px; }
   .deck-evidence { position: static; width: 100%; margin-top: 13px; padding: 13px; gap: 7px; }
   .deck-evidence strong, .deck-evidence span, .deck-footnote { font-size: 7px; }
   .deck-architecture { min-height: 650px; }
@@ -761,7 +771,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   .product-head-actions { align-items: stretch; flex-direction: column; }
   .network-readout { min-width: 0; }
   .workspace-source { white-space: normal; line-height: 1.5; }
-  .filter-tabs button { min-height: 44px; }
+  .filter-tabs button { min-height: 44px; font-size: 12px; }
   .campaign-main p { white-space: normal; line-height: 1.55; }
   .row-action { margin-left: 0; min-height: 44px; }
   .docs-nav a { min-height: 44px; font-size: 12px; }
@@ -775,7 +785,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   .deck-flow strong { font-size: 12px; }
   .deck-quote { font-size: 16px; line-height: 1.45; }
   .deck-demo-card small, .deck-browser b { font-size: 9px; }
-  .deck-demo-card p, .deck-demo-card button { font-size: 12px; }
+  .deck-demo-card p, .deck-demo-result { font-size: 12px; }
   .deck-evidence strong, .deck-evidence span, .deck-footnote { font-size: var(--screen-micro); }
   .deck-architecture-map small { font-size: 9px; }
   .deck-architecture-map strong, .deck-honesty, .deck-timeline p { font-size: var(--screen-label); }
@@ -797,7 +807,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 @page docs { size: A4; margin: 16mm; }
 
 @media print {
-  .site-header, .site-footer, .print-hidden { display: none !important; }
+  .site-header, .site-footer, .print-hidden, .skip-link { display: none !important; }
   body { background: #fff; }
   .deck-page { padding: 0; background: #fff; }
   .deck-slide { width: 13.333in; height: 7.5in; margin: 0; box-shadow: none; break-after: page; page-break-after: always; }

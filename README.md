@@ -78,6 +78,7 @@ pnpm typecheck
 pnpm test
 pnpm test:contracts
 pnpm build
+pnpm check:client-boundaries
 pnpm build:cloudflare
 pnpm test:e2e
 ```
@@ -87,6 +88,8 @@ pnpm test:e2e
 ## Worker 릴리스
 
 PDF 3종과 팀 사진은 제출용 비버전 자산이므로 Git에 커밋하지 않습니다. 배포 전 아래 파일이 모두 있는지 확인합니다.
+
+팀 사진은 화면과 A4 PDF에 필요한 480px 폭 PNG로 내보내고 500KB 이하로 유지합니다. `check:release`가 이 상한도 검사합니다.
 
 ```powershell
 Get-Item public/artifacts/wadang-pitch-deck.pdf
@@ -102,7 +105,7 @@ $env:RELEASE_BASE_URL="https://wadang.jeonsavvy.workers.dev"
 pnpm check:release
 ```
 
-`check:release`는 앱 8개 경로와 PDF 3종·팀 사진의 HTTP 상태, 콘텐츠 타입, 최소 크기를 검사하고 비버전 자산의 배포본 SHA-256이 로컬 원본과 같은지 확인합니다.
+`check:release`는 앱 8개 경로와 PDF 3종·팀 사진의 HTTP 상태, 콘텐츠 타입과 크기를 검사하고 비버전 자산의 배포본 SHA-256이 로컬 원본과 같은지 확인합니다.
 
 ## 테스트넷 설정
 

@@ -76,7 +76,7 @@ export default function DeckPage() {
           <h2>규칙 생성부터 접근 자격 확인까지<br /><em>GIWA Sepolia에서 실행했습니다.</em></h2>
           <div className="deck-demo-frame">
             <div className="deck-browser"><span /><span /><span /><b>wadang.jeonsavvy.workers.dev/madang/1</b></div>
-            <div className="deck-demo-card"><small>MADANG · DOJANG CHECK</small><BadgeCheck /><h3>TESTNET CONTRACT CONNECTED</h3><p>{wadangAddress}</p><button>입장 완료 · isEligible true</button></div>
+            <div className="deck-demo-card"><small>MADANG · DOJANG CHECK</small><BadgeCheck /><h3>TESTNET CONTRACT CONNECTED</h3><p>{wadangAddress}</p><span className="deck-demo-result">입장 완료 · isEligible true</span></div>
             <div className="deck-evidence"><strong>VERIFIED ONCHAIN</strong><span>Campaign 1 · create + claim</span><span>Campaign 2 · create + cancel</span><span>14 contract scenarios</span><span>Source · {wadangRelease.sourceCommit.slice(0, 8)}</span></div>
           </div>
           <p className="deck-footnote">Verified contract · {wadangRelease.contractAddress} · Campaign 1 참여 후 현재 자격 true</p>

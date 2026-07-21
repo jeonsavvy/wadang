@@ -30,10 +30,10 @@ export default function Home() {
             한 번만 참여합니다. 참여 기록은 GIWA Sepolia에 남습니다.
           </p>
           <div className="hero-actions">
-            <Link className="button button-accent button-large" href="/open">
+            <Link className="button button-accent button-large" href="/open" prefetch={false}>
               마당 열기 <ArrowRight size={17} />
             </Link>
-            <Link className="text-link" href="/docs">
+            <Link className="text-link" href="/docs" prefetch={false}>
               작동 방식 보기 ↗
             </Link>
           </div>
@@ -94,7 +94,7 @@ export default function Home() {
             <span className="eyebrow">운영자와 참여자</span>
             <h2>마당을 열고,<br />인증 지갑이 입장합니다.</h2>
           </div>
-          <Link className="text-link" href="/madang/1">테스트넷 마당 보기 ↗</Link>
+          <Link className="text-link" href="/madang/1" prefetch={false}>테스트넷 마당 보기 ↗</Link>
         </div>
         <div className="journey-grid">
           <article className="journey-card organizer-card">
@@ -106,7 +106,7 @@ export default function Home() {
               <li><span>02</span>기간·정원·안내문 입력</li>
               <li><span>03</span>트랜잭션 확인 후 링크 공유</li>
             </ol>
-            <Link href="/open">운영자 흐름 시작 <ArrowRight size={15} /></Link>
+            <Link href="/open" prefetch={false}>운영자 흐름 시작 <ArrowRight size={15} /></Link>
           </article>
           <article className="journey-card participant-card">
             <span className="journey-role">참여자</span>
@@ -117,7 +117,7 @@ export default function Home() {
               <li><span>02</span>현재 인증과 캠페인 상태 확인</li>
               <li><span>03</span>입장 후 Explorer 영수증 확인</li>
             </ol>
-            <Link href="/docs">참여 규칙 보기 <ArrowRight size={15} /></Link>
+            <Link href="/docs" prefetch={false}>참여 규칙 보기 <ArrowRight size={15} /></Link>
           </article>
         </div>
       </section>
@@ -128,7 +128,7 @@ export default function Home() {
           <span className="eyebrow">외부 앱 연동</span>
           <h2><code>isEligible</code>로 참여 이력과 현재 인증을 함께 조회합니다.</h2>
         </div>
-        <Link className="button button-dark button-large" href="/docs#integration">
+        <Link className="button button-dark button-large" href="/docs#integration" prefetch={false}>
           연동 코드 보기 <CircleCheckBig size={17} />
         </Link>
       </section>

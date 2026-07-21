@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   Blocks,
   Code2,
   ExternalLink,
@@ -42,7 +43,7 @@ export default function GasokPage() {
           <span>WORKING MVP</span>
           <h2>WADANG 앱</h2>
           <p>참여 규칙 생성, Playground 테스트 인증 확인, 온체인 참여와 현재 접근 자격을 확인합니다.</p>
-          <Link className="text-link" href="/">제품 열기 <ExternalLink size={12} /></Link>
+          <Link className="text-link" href="/" prefetch={false}>제품 열기 <ArrowRight size={12} /></Link>
         </article>
         <article className="gasok-card">
           <FileText size={28} />
@@ -63,7 +64,7 @@ export default function GasokPage() {
           <span>TECHNICAL DOCUMENT</span>
           <h2>기술문서</h2>
           <p>컨트랙트 API, <code>isEligible</code> 연동, attester 선택, 테스트와 보안 경계를 설명합니다.</p>
-          <Link className="text-link" href="/docs">웹 문서 열기 <ExternalLink size={12} /></Link>
+          <Link className="text-link" href="/docs" prefetch={false}>웹 문서 열기 <ArrowRight size={12} /></Link>
         </article>
         <article className="gasok-card">
           <Code2 size={28} />
@@ -87,7 +88,7 @@ export default function GasokPage() {
           <dt>Network</dt><dd>{wadangRelease.network} · Chain ID {wadangRelease.chainId}</dd>
           <dt>Application</dt><dd><a href={wadangRelease.appUrl}>{wadangRelease.appUrl}</a></dd>
           <dt>Contract</dt><dd><a href={`${explorerUrl}/address/${wadangRelease.contractAddress}#code`} rel="noreferrer" target="_blank"><code>{wadangRelease.contractAddress}</code></a></dd>
-          <dt>Campaign 1</dt><dd><Link href="/madang/1">생성·참여·현재 자격 확인</Link> · <a href={transactionUrl(wadangRelease.transactions.createCampaign1)} rel="noreferrer" target="_blank">생성 영수증</a> · <a href={transactionUrl(wadangRelease.transactions.claimCampaign1)} rel="noreferrer" target="_blank">참여 영수증</a></dd>
+          <dt>Campaign 1</dt><dd><Link href="/madang/1" prefetch={false}>생성·참여·현재 자격 확인</Link> · <a href={transactionUrl(wadangRelease.transactions.createCampaign1)} rel="noreferrer" target="_blank">생성 영수증</a> · <a href={transactionUrl(wadangRelease.transactions.claimCampaign1)} rel="noreferrer" target="_blank">참여 영수증</a></dd>
           <dt>Campaign 2</dt><dd><a href={transactionUrl(wadangRelease.transactions.cancelCampaign2)} rel="noreferrer" target="_blank">운영자 취소 영수증</a></dd>
           <dt>Simulation</dt><dd>미인증 {wadangRelease.simulations.unverifiedClaim} · 중복 {wadangRelease.simulations.duplicateClaim} · 비운영자 취소 {wadangRelease.simulations.unauthorizedCancel}</dd>
           <dt>Source</dt><dd><a href={sourceCommitUrl} rel="noreferrer" target="_blank"><code>{wadangRelease.sourceCommit.slice(0, 8)}</code></a> · Solidity SHA-256 <code>{wadangRelease.contractSourceSha256}</code></dd>

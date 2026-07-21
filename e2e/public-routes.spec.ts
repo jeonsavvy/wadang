@@ -31,6 +31,23 @@ for (const route of routes) {
   });
 }
 
+test("public pages defer wallet runtime until the product flow", async ({ page }) => {
+  await gotoReady(page, "/", ".hero");
+  await expect(page.getByRole("link", { name: "마당 열기", exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "지갑 연결" })).toHaveCount(0);
+
+  await gotoReady(page, "/open", "main h1");
+  await expect(page.getByRole("button", { name: "지갑 연결" })).toBeVisible();
+});
+
+test("keyboard users can skip directly to page content", async ({ page }) => {
+  await gotoReady(page, "/", ".hero");
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("link", { name: "본문으로 건너뛰기" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#main-content")).toBeFocused();
+});
+
 test.describe("product states", () => {
   test("wallet-disconnected create state keeps the primary action blocked", async ({ page }) => {
     await gotoReady(page, "/open", "main h1");
