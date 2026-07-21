@@ -474,6 +474,130 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 .profile-entry a { grid-column: 2; }
 .profile-sheet footer { margin-top: auto; padding-top: 5mm; border-top: 1px solid var(--line); display: flex; justify-content: space-between; color: var(--muted); font-size: 6px; }
 
+/* Screen readability layer. Print exports intentionally keep the compact source scale. */
+@media screen {
+  :root {
+    --muted: #56564f;
+    --screen-body: 15px;
+    --screen-supporting: 13px;
+    --screen-label: 11px;
+    --screen-micro: 10px;
+    --screen-leading: 1.7;
+  }
+
+  .site-header nav { font-size: 14px; }
+  .site-header nav a { min-height: 44px; display: inline-flex; align-items: center; }
+  .site-footer span, .footer-links { font-size: var(--screen-supporting); line-height: 1.55; }
+  .footer-links a { min-height: 44px; display: inline-flex; align-items: center; }
+  .button, .text-link { font-size: 14px; }
+  .text-link { min-height: 44px; align-items: center; }
+  .eyebrow { font-size: var(--screen-micro); line-height: 1.45; }
+  .wallet-popover { width: 240px; font-size: 12px; line-height: 1.5; }
+  .wallet-popover button { min-height: 44px; font-size: var(--screen-supporting); }
+
+  .hero-meta { font-size: var(--screen-label); line-height: 1.5; }
+  .madang-pass-top, .madang-pass-bottom, .madang-pass small { font-size: var(--screen-micro); line-height: 1.45; }
+  .madang-pass p { font-size: var(--screen-supporting); line-height: 1.6; }
+  .wadang-stamp b { font-size: 9px; }
+  .status-pill { min-height: 28px; font-size: var(--screen-micro); }
+  .proof-grid p { font-size: 14px; line-height: var(--screen-leading); }
+  .story-section > p { max-width: 65ch; font-size: var(--screen-body); line-height: 1.75; }
+  .journey-role { font-size: var(--screen-label); }
+  .journey-card ol { font-size: 14px; line-height: 1.6; }
+  .journey-card li span { font-size: var(--screen-label); }
+  .journey-card > a { min-height: 44px; font-size: var(--screen-supporting); }
+  .gasok-card span { font-size: var(--screen-micro); line-height: 1.45; }
+  .gasok-card p { font-size: 14px; line-height: var(--screen-leading); }
+  .gasok-release dt { color: #c3cec1; font-size: var(--screen-label); }
+  .gasok-release dd { font-size: 12px; line-height: 1.55; }
+  .page-intro p { max-width: 68ch; font-size: var(--screen-body); line-height: 1.75; }
+
+  .product-page-head p { max-width: 68ch; font-size: 14px; line-height: 1.65; }
+  .product-kicker { font-size: var(--screen-micro); }
+  .network-readout span { font-size: var(--screen-micro); }
+  .network-readout strong { font-size: var(--screen-supporting); }
+  .filter-tabs button { min-height: 44px; font-size: var(--screen-supporting); }
+  .filter-tabs button span { min-width: 20px; height: 20px; font-size: var(--screen-micro); }
+  .workspace-source { font-size: var(--screen-micro); }
+  .notice, .error-box, .success-box { font-size: var(--screen-supporting); line-height: 1.65; }
+  .empty-state { font-size: var(--screen-supporting); line-height: 1.6; }
+  .campaign-main p { font-size: var(--screen-supporting); }
+  .campaign-stats small { font-size: var(--screen-micro); }
+  .row-action { min-height: 44px; font-size: 12px; }
+
+  .form-block header p { font-size: var(--screen-supporting); line-height: 1.6; }
+  .field label { font-size: 14px; }
+  .field label span { font-size: var(--screen-label); }
+  .form-actions p { font-size: var(--screen-supporting); line-height: var(--screen-leading); }
+  .creation-summary dt { font-size: var(--screen-label); }
+  .creation-summary dd { font-size: var(--screen-supporting); }
+  .creation-summary dd code { font-size: var(--screen-micro); }
+  .creation-summary > p { font-size: 12px; line-height: var(--screen-leading); }
+  .receipt-card p { font-size: var(--screen-supporting); line-height: 1.6; }
+
+  .campaign-kicker { font-size: var(--screen-label); }
+  .campaign-overview-main > p { font-size: 14px; line-height: var(--screen-leading); }
+  .campaign-meta dt, .claim-meter > span, .claim-meter > p, .current-step small { font-size: var(--screen-micro); }
+  .campaign-meta dd, .rule-card dt, .rule-card dd { font-size: 12px; }
+  .current-step b, .check-row strong { font-size: var(--screen-supporting); }
+  .check-row small { font-size: var(--screen-label); line-height: 1.5; }
+  .cancel-button { min-height: 44px; font-size: var(--screen-supporting); }
+
+  .docs-head p { max-width: 68ch; font-size: var(--screen-body); line-height: 1.7; }
+  .docs-nav strong { font-size: 12px; }
+  .docs-nav a { min-height: 44px; font-size: 12px; }
+  .docs-summary-grid span { font-size: var(--screen-micro); }
+  .docs-summary-grid strong { font-size: 20px; }
+  .docs-summary-grid p { font-size: var(--screen-supporting); line-height: 1.65; }
+  .architecture-flow small { font-size: var(--screen-micro); line-height: 1.4; }
+  .architecture-flow strong { font-size: 12px; line-height: 1.45; }
+  .docs-copy { max-width: 70ch; font-size: 14px; line-height: 1.75; }
+  .api-list > div { min-height: 64px; }
+  .api-list code, .api-list p { font-size: var(--screen-supporting); line-height: 1.55; }
+  .integration-code code { font-size: 12px; line-height: 1.75; }
+  .invariant-grid strong { font-size: 18px; }
+  .invariant-grid p { font-size: 12px; line-height: var(--screen-leading); }
+  .config-item span { font-size: var(--screen-micro); }
+  .config-item code { font-size: var(--screen-label); line-height: 1.5; }
+  .boundary-grid ul { font-size: var(--screen-supporting); line-height: 1.8; }
+  .docs-evidence p, .mainnet-plan p { font-size: var(--screen-supporting); line-height: var(--screen-leading); }
+  .artifact-toolbar { min-height: 68px; font-size: var(--screen-label); }
+
+  .deck-logo { font-size: clamp(10px, .9vw, 14px); }
+  .deck-number { font-size: clamp(9px, .78vw, 12px); }
+  .deck-tag { font-size: clamp(8px, .72vw, 11px); }
+  .deck-triad span { font-size: clamp(9px, .78vw, 12px); }
+  .deck-side-label { font-size: clamp(7px, .62vw, 10px); }
+  .deck-three span, .deck-market-grid span { font-size: clamp(9px, .82vw, 12px); }
+  .deck-three p, .deck-market-grid p { font-size: clamp(9px, .78vw, 12px); }
+  .deck-flow small, .deck-two small { font-size: clamp(8px, .68vw, 10px); }
+  .deck-flow strong { font-size: clamp(10px, .9vw, 13px); }
+  .deck-two ol { font-size: clamp(9px, .76vw, 12px); }
+  .deck-browser b { font-size: clamp(7px, .58vw, 9px); }
+  .deck-demo-card small { font-size: clamp(7px, .58vw, 9px); }
+  .deck-demo-card p, .deck-demo-card button { font-size: clamp(8px, .68vw, 10px); line-height: 1.5; }
+  .deck-evidence strong, .deck-evidence span, .deck-footnote { font-size: clamp(7px, .58vw, 9px); line-height: 1.45; }
+  .deck-architecture-map small { font-size: clamp(7px, .58vw, 9px); }
+  .deck-architecture-map strong { font-size: clamp(9px, .82vw, 12px); }
+  .deck-boundaries span { font-size: clamp(8px, .68vw, 10px); }
+  .deck-honesty { font-size: clamp(9px, .76vw, 11px); line-height: 1.5; }
+  .deck-kpis span { font-size: clamp(9px, .76vw, 12px); }
+  .deck-timeline small { font-size: clamp(8px, .68vw, 10px); }
+  .deck-timeline strong { font-size: clamp(10px, .9vw, 13px); }
+  .deck-timeline p { font-size: clamp(9px, .76vw, 11px); line-height: 1.55; }
+  .deck-team-grid > div:first-child > p { font-size: clamp(9px, .78vw, 12px); }
+  .deck-proof-list span, .deck-ask small, .deck-ask p, .deck-end { font-size: clamp(8px, .68vw, 10px); line-height: 1.5; }
+
+  .profile-brand { font-size: 12px; }
+  .profile-brand small, .profile-brand b { font-size: 9px; }
+  .profile-hero p { font-size: 12px; line-height: 1.55; }
+  .profile-grid p { font-size: 12px; line-height: 1.7; }
+  .profile-grid strong { font-size: var(--screen-supporting); }
+  .profile-grid a { min-height: 32px; font-size: var(--screen-label); align-items: center; }
+  .profile-entry > span { font-size: var(--screen-micro); }
+  .profile-sheet footer { font-size: 9px; }
+}
+
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -624,6 +748,48 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   .deck-ask { padding: 20px; }
   .deck-ask h3 { font-size: 17px; }
   .artifact-toolbar { width: calc(100% - 24px); }
+}
+
+@media screen and (max-width: 820px) {
+  .wordmark { font-size: 14px; }
+  .site-header .button { min-height: 44px; font-size: 12px; }
+  .hero-lede { font-size: var(--screen-body); }
+  .proof-grid > div, .proof-grid > div:last-child { padding: 34px 26px; }
+  .story-section > p, .page-intro p, .docs-head p { font-size: var(--screen-body); }
+  .journey-card { min-height: 0; }
+  .gasok-card { min-height: 0; padding: 26px; }
+  .product-head-actions { align-items: stretch; flex-direction: column; }
+  .network-readout { min-width: 0; }
+  .workspace-source { white-space: normal; line-height: 1.5; }
+  .filter-tabs button { min-height: 44px; }
+  .campaign-main p { white-space: normal; line-height: 1.55; }
+  .row-action { margin-left: 0; min-height: 44px; }
+  .docs-nav a { min-height: 44px; font-size: 12px; }
+  .architecture-flow > div { min-height: 112px; }
+
+  .deck-logo { font-size: 10px; }
+  .deck-tag, .deck-number, .deck-flow small, .deck-two small { font-size: 9px; }
+  .deck-cover > p { font-size: 14px; }
+  .deck-triad span { font-size: var(--screen-micro); }
+  .deck-three p, .deck-market-grid p, .deck-two ol { font-size: 12px; line-height: 1.65; }
+  .deck-flow strong { font-size: 12px; }
+  .deck-quote { font-size: 16px; line-height: 1.45; }
+  .deck-demo-card small, .deck-browser b { font-size: 9px; }
+  .deck-demo-card p, .deck-demo-card button { font-size: 12px; }
+  .deck-evidence strong, .deck-evidence span, .deck-footnote { font-size: var(--screen-micro); }
+  .deck-architecture-map small { font-size: 9px; }
+  .deck-architecture-map strong, .deck-honesty, .deck-timeline p { font-size: var(--screen-label); }
+  .deck-boundaries span, .deck-kpis span, .deck-timeline small { font-size: var(--screen-micro); }
+  .deck-timeline strong { font-size: 13px; }
+  .deck-team-grid > div:first-child > p { font-size: 12px; }
+  .deck-proof-list span, .deck-ask small, .deck-ask p, .deck-end { font-size: var(--screen-micro); }
+
+  .profile-sheet { padding: 28px 24px; }
+  .profile-hero { margin: 56px 0 44px; gap: 30px; }
+  .profile-grid { gap: 34px; }
+  .profile-main, .profile-grid aside { gap: 28px; }
+  .profile-grid a { min-height: 44px; }
+  .profile-entry { grid-template-columns: 96px 1fr; gap: 6px 18px; }
 }
 
 @page deck { size: 13.333in 7.5in; margin: 0; }
