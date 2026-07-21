@@ -76,7 +76,7 @@ test.describe("product states", () => {
     await page.route("https://sepolia-rpc.giwa.io/**", (route) => route.abort());
 
     await gotoReady(page, "/madang/1", ".campaign-detail-shell");
-    await expect(page.getByText("마당을 읽지 못했습니다. 공유 ID와 GIWA RPC 상태를 확인해 주세요.")).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText("마당을 읽지 못했습니다. 링크의 마당 ID와 GIWA RPC 상태를 확인해 주세요.")).toBeVisible({ timeout: 20_000 });
   });
 
   test("long Korean form content does not create horizontal overflow", async ({ page }) => {

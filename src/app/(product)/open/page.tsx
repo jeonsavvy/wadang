@@ -11,7 +11,7 @@ export default function OpenPage() {
         <div>
           <span className="product-kicker">운영</span>
           <h1>마당 만들기</h1>
-          <p>캠페인 이름, 기간과 정원을 입력해 GIWA Sepolia에 기록합니다.</p>
+          <p>이름, 안내문, 기간과 정원을 입력해 마당을 만듭니다. 생성 결과는 GIWA Sepolia에 기록됩니다.</p>
         </div>
       </header>
       <OpenMadangForm />

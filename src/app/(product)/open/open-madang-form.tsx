@@ -128,7 +128,7 @@ export function OpenMadangForm() {
                 <input id="endsAt" name="endsAt" onChange={(event) => setEndsAt(event.target.value)} type="datetime-local" value={endsAt} required />
               </div>
               <div className="field">
-                <label htmlFor="capacity">최대 참여 수 <span>1–10,000</span></label>
+                <label htmlFor="capacity">최대 참여 수 <span>1~10,000</span></label>
                 <input defaultValue="100" id="capacity" max="10000" min="1" name="capacity" type="number" required />
               </div>
             </div>
@@ -152,7 +152,7 @@ export function OpenMadangForm() {
             <div><dt>운영자</dt><dd><code>{address ?? "연결 전"}</code></dd></div>
             <div><dt>참여 제한</dt><dd>지갑당 한 번</dd></div>
             <div><dt>인증 기준</dt><dd>Dojang 테스트 인증</dd></div>
-            <div><dt>가치 전송</dt><dd>없음</dd></div>
+            <div><dt>토큰·자금</dt><dd>전송 없음</dd></div>
           </dl>
           <p>캠페인 정보와 참여 기록은 공개 컨트랙트에서 누구나 확인할 수 있습니다.</p>
         </aside>

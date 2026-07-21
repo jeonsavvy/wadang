@@ -1,17 +1,17 @@
 # WADANG · 와당
 
-**Dojang 검증을 참여와 접근 자격으로 연결하는 온체인 마당**
+**Dojang 인증 지갑의 참여를 기록하고, 외부 앱이 접근 가능 여부를 조회하는 온체인 마당**
 GASOK Track 03 · GIWA-NATIVE IDEAS 출품작
 
-WADANG은 Dojang의 지갑 검증 결과에 기간, 정원, 지갑당 한 번의 참여 규칙을 더합니다. 참여 결과는 GIWA에 기록되며, 다른 앱은 `isEligible`을 호출해 해당 지갑의 현재 접근 자격을 확인할 수 있습니다.
+WADANG은 Dojang 인증 지갑에 기간, 정원, 지갑당 한 번의 참여 규칙을 적용합니다. 참여 기록은 GIWA Sepolia에 남고, 외부 앱은 `isEligible`로 해당 지갑의 현재 접근 가능 여부를 조회할 수 있습니다.
 
-캠페인은 이 구조를 보여주는 첫 사용 사례입니다. 운영자는 마당을 열고 공유 링크를 만들며, 참여자는 Playground 테스트 인증을 확인받은 뒤 입장합니다. [배포된 앱에서 전체 흐름을 직접 확인할 수 있습니다.](https://wadang.jeonsavvy.workers.dev)
+현재 MVP는 캠페인 운영과 참여를 구현했습니다. 운영자는 마당을 열어 링크를 공유하고, 참여자는 Playground 테스트 인증을 확인받은 뒤 입장합니다. [배포된 앱에서 직접 확인할 수 있습니다.](https://wadang.jeonsavvy.workers.dev)
 
 ## 역할
 
-- **Dojang:** 지갑의 검증 정보를 제공합니다.
-- **WADANG:** 검증 정보에 참여 규칙과 이력을 연결합니다.
-- **연동 앱:** WADANG의 참여 결과를 접근이나 후속 혜택의 조건으로 사용합니다.
+- **Dojang:** 지갑의 현재 인증 상태를 제공합니다.
+- **WADANG:** 기간, 정원과 중복 여부를 검사하고 참여를 기록합니다.
+- **연동 앱:** `isEligible`로 참여 이력과 현재 인증을 함께 조회합니다.
 
 ## 주요 기능
 
@@ -47,7 +47,7 @@ hasClaimed(uint256 campaignId, address account)
 isEligible(uint256 campaignId, address account)
 ```
 
-컨트랙트는 현재 Dojang 검증, 지갑당 한 번의 참여, 기간, 정원, 취소 상태와 운영자 권한을 강제합니다. 자금이나 토큰을 보관하지 않으며 관리자, 업그레이드, 임의 호출 기능이 없습니다.
+컨트랙트는 참여 시점의 Dojang 인증, 지갑당 한 번의 참여, 기간, 정원, 취소 상태와 운영자 권한을 검사합니다. 자금이나 토큰을 보관하지 않으며 관리자, 업그레이드, 임의 호출 기능이 없습니다.
 
 ### GIWA Sepolia 배포
 
@@ -58,7 +58,7 @@ isEligible(uint256 campaignId, address account)
 - 배포 소스 커밋: [`27b70b52`](https://github.com/jeonsavvy/wadang/commit/27b70b520654110d216a5c9db8083043e4251d7e)
 - `contracts/WadangCampaigns.sol` SHA-256: `86a60fe99f44b2890d8da5c36a36faa08a57dcc5f9c920b180b7838187b5a86b`
 
-캠페인 1 참여 후 `isEligible(1, participant) == true`를 확인했습니다. 미인증 참여, 중복 참여와 비운영자 취소는 RPC simulation에서 각각 `NotVerified`, `AlreadyClaimed`, `NotOrganizer`로 거절됐습니다.
+캠페인 1 참여 후 `isEligible(1, participant) == true`를 확인했습니다. 미인증 참여, 중복 참여와 비운영자 취소는 RPC 시뮬레이션에서 각각 `NotVerified`, `AlreadyClaimed`, `NotOrganizer`로 거절됐습니다.
 
 ## 로컬 실행
 
@@ -83,7 +83,7 @@ pnpm build:cloudflare
 pnpm test:e2e
 ```
 
-컨트랙트 테스트는 입력 경계, 인증·미인증·중복, 시작·종료 시각, 정원, 취소 권한, 인증 변경, verifier 오류와 외부 접근 연동을 확인합니다.
+컨트랙트 테스트는 입력 경계, 인증·미인증·중복, 시작·종료 시각, 정원, 취소 권한, 인증 변경과 verifier 오류를 확인합니다. 별도 소비자 컨트랙트로 `isEligible` 연동도 검사합니다.
 
 ## Worker 릴리스
 
@@ -98,7 +98,7 @@ Get-Item public/artifacts/wadang-technical-docs.pdf
 Get-Item public/team/jeon-chan-hyuk.png
 ```
 
-필수 자산 확인 → **Linux에서** `pnpm build:cloudflare` → `pnpm exec wrangler deploy --dry-run`과 로컬 preview → `pnpm exec wrangler deploy` → 아래 release smoke 순서로 진행합니다. Cloudflare Git Build의 production deploy command는 `npx wrangler versions upload`로 유지해 push가 활성 배포를 자동 교체하지 않게 합니다.
+필수 자산 확인 → **Linux에서** `pnpm build:cloudflare` → `pnpm exec wrangler deploy --dry-run`과 로컬 미리보기 → `pnpm exec wrangler deploy` → 아래 릴리스 점검 순서로 진행합니다. Cloudflare Git Build의 production deploy command는 `npx wrangler versions upload`로 유지해 push가 활성 배포를 자동 교체하지 않게 합니다.
 
 ```powershell
 $env:RELEASE_BASE_URL="https://wadang.jeonsavvy.workers.dev"

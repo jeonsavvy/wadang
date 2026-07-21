@@ -18,11 +18,11 @@ describe("campaign form byte limits", () => {
 
   it("accepts and rejects the contract's exact title boundary", () => {
     expect(validateCampaignDraft({ ...validDraft, title: "가".repeat(26) }, Date.UTC(2026, 6, 19))).toBeUndefined();
-    expect(validateCampaignDraft({ ...validDraft, title: "가".repeat(27) }, Date.UTC(2026, 6, 19))).toContain("80 bytes");
+    expect(validateCampaignDraft({ ...validDraft, title: "가".repeat(27) }, Date.UTC(2026, 6, 19))).toContain("80바이트");
   });
 
   it("rejects invalid windows and capacity before the wallet prompt", () => {
     expect(validateCampaignDraft({ ...validDraft, capacity: 10_001 }, Date.UTC(2026, 6, 19))).toContain("10,000");
-    expect(validateCampaignDraft({ ...validDraft, endsAt: validDraft.startsAt }, Date.UTC(2026, 6, 19))).toContain("뒤여야");
+    expect(validateCampaignDraft({ ...validDraft, endsAt: validDraft.startsAt }, Date.UTC(2026, 6, 19))).toContain("이후여야");
   });
 });

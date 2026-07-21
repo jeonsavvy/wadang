@@ -158,7 +158,7 @@ export function MadangDetail({ id }: { id: string }) {
         <div className="notice preview-notice"><CircleAlert size={19} /><div><strong>테스트넷 배포 전</strong>WADANG 컨트랙트 주소가 설정되면 실제 캠페인 데이터를 표시합니다.</div></div>
       )}
       {campaignRead.isLoading && wadangAddress && <div className="empty-state"><LoaderCircle className="spin" />마당 #{id}을 읽는 중…</div>}
-      {campaignRead.error && <div className="error-box">마당을 읽지 못했습니다. 공유 ID와 GIWA RPC 상태를 확인해 주세요.</div>}
+      {campaignRead.error && <div className="error-box">마당을 읽지 못했습니다. 링크의 마당 ID와 GIWA RPC 상태를 확인해 주세요.</div>}
       {campaign && (
         <>
           <section className="campaign-hero campaign-overview">
@@ -190,7 +190,7 @@ export function MadangDetail({ id }: { id: string }) {
                 <div className="check-list">
                   <CheckRow ok={isConnected} label="지갑" detail={address ? shortenAddress(address, 7) : "미연결"} />
                   <CheckRow ok={chainId === giwaSepolia.id} label="네트워크" detail={chainId === giwaSepolia.id ? "GIWA Sepolia · 91342" : isConnected ? "GIWA Sepolia로 전환 필요" : "지갑 연결 후 확인"} />
-                  <CheckRow ok={isVerified === true} pending={isConnected && verificationRead.isLoading} label="Dojang" detail={isVerified ? "테스트 인증 확인" : isConnected ? "인증을 확인하지 못함" : "지갑 연결 후 조회"} />
+                  <CheckRow ok={isVerified === true} pending={isConnected && verificationRead.isLoading} label="Dojang" detail={isVerified ? "테스트 인증됨" : isConnected ? "인증을 확인하지 못함" : "지갑 연결 후 조회"} />
                   <CheckRow ok={hasClaimed} label="참여" detail={hasClaimed ? "입장 기록 있음" : "참여 전"} neutral={!hasClaimed} />
                 </div>
 
@@ -201,7 +201,7 @@ export function MadangDetail({ id }: { id: string }) {
                 {hasClaimed && !claimReceipt.isSuccess && <div className="notice compact-notice"><CircleAlert size={17} /><div><strong>이미 입장한 지갑입니다</strong>Explorer에서 기존 참여 기록을 확인할 수 있습니다.</div></div>}
                 {(claimWrite.error || claimReceipt.error) && <div className="error-box" role="alert">{formatContractError(claimWrite.error ?? claimReceipt.error)}</div>}
                 {claimReceipt.isSuccess && claimWrite.data && (
-                  <div className="receipt-card compact-receipt"><WadangStamp label="ENTRY RECORDED" /><div><strong>입장이 기록되었습니다.</strong><p>이 지갑의 Dojang 인증과 참여 결과가 GIWA Sepolia에서 확인됩니다.</p><a className="text-link" href={`${explorerUrl}/tx/${claimWrite.data}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a></div></div>
+                  <div className="receipt-card compact-receipt"><WadangStamp label="ENTRY RECORDED" /><div><strong>입장이 기록되었습니다.</strong><p>참여 트랜잭션이 GIWA Sepolia에 기록됐습니다.</p><a className="text-link" href={`${explorerUrl}/tx/${claimWrite.data}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a></div></div>
                 )}
 
                 <button className="button button-accent button-large claim-button" disabled={!wadangAddress || step !== "claim" || claimPending} onClick={claim} type="button">
@@ -217,8 +217,8 @@ export function MadangDetail({ id }: { id: string }) {
                 <div><dt>문 여는 시각</dt><dd>{formatDate(campaign.startsAt)}</dd></div>
                 <div><dt>문 닫는 시각</dt><dd>{formatDate(campaign.endsAt)}</dd></div>
                 <div><dt>지갑당 참여</dt><dd>한 번</dd></div>
-                <div><dt>현재 자격</dt><dd>Dojang 재확인</dd></div>
-                <div><dt>가치 전송</dt><dd>없음</dd></div>
+                <div><dt>접근 조건</dt><dd>참여 기록·Dojang 인증</dd></div>
+                <div><dt>토큰·자금</dt><dd>전송 없음</dd></div>
               </dl>
               {wadangAddress && <a className="text-link" href={`${explorerUrl}/address/${wadangAddress}`} rel="noreferrer" target="_blank">컨트랙트 살펴보기 ↗</a>}
               {isOrganizer && phase !== "canceled" && (

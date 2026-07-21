@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { ManageMadang } from "./manage-madang";
 
-export const metadata: Metadata = { title: "열린 마당" };
+export const metadata: Metadata = { title: "내 마당" };
 
 export default function ManagePage() {
   return (

@@ -33,7 +33,7 @@ export default function GasokPage() {
         </div>
         <div>
           <StatusPill tone="live">GIWA Sepolia 검증 완료</StatusPill>
-          <p>작동 MVP, 팀, 기술 구현과 공개 소스를 한곳에서 확인할 수 있습니다. WADANG은 Dojang 검증을 참여 규칙으로 사용하고, 그 결과를 다른 앱이 접근 자격으로 다시 읽게 합니다.</p>
+          <p>실행 가능한 MVP, 팀 소개, 기술문서와 공개 소스를 한곳에 모았습니다. WADANG은 Dojang 인증 지갑의 참여를 기록하고, 외부 앱이 그 기록과 현재 인증을 함께 조회하게 합니다.</p>
         </div>
       </div>
 
@@ -42,14 +42,14 @@ export default function GasokPage() {
           <Blocks size={28} />
           <span>WORKING MVP</span>
           <h2>WADANG 앱</h2>
-          <p>참여 규칙 생성, Playground 테스트 인증 확인, 온체인 참여와 현재 접근 자격을 확인합니다.</p>
+          <p>참여 규칙을 만들고, Playground 테스트 인증을 확인한 뒤 참여를 온체인에 기록합니다.</p>
           <Link className="text-link" href="/" prefetch={false}>제품 열기 <ArrowRight size={12} /></Link>
         </article>
         <article className="gasok-card">
           <FileText size={28} />
           <span>PITCH DECK · 9 PAGES</span>
           <h2>피치덱</h2>
-          <p>문제, Dojang과 WADANG의 역할, MVP 증거, 확장 경로와 90일 검증 계획을 담았습니다.</p>
+          <p>문제, Dojang과 WADANG의 역할, 테스트넷 실행 결과와 90일 계획을 담았습니다.</p>
           <a className="text-link" href="/artifacts/wadang-pitch-deck.pdf">PDF 열기 <ExternalLink size={12} /></a>
         </article>
         <article className="gasok-card">
@@ -77,7 +77,7 @@ export default function GasokPage() {
           <ShieldCheck size={28} />
           <span>VERIFIED CONTRACT</span>
           <h2>GIWA Explorer</h2>
-          <p>배포 주소, 검증된 소스와 실제 테스트넷 트랜잭션을 확인합니다.</p>
+          <p>배포 주소, 검증된 소스와 테스트넷 트랜잭션을 Explorer에서 확인할 수 있습니다.</p>
           <a className="text-link" href={`${explorerUrl}/address/${wadangAddress}#code`} rel="noreferrer" target="_blank">검증된 소스 열기 <ExternalLink size={12} /></a>
         </article>
       </section>

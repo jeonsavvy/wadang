@@ -4,8 +4,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "WADANG — Dojang 검증을 참여와 접근 자격으로",
-    template: "%s — WADANG",
+    default: "WADANG | Dojang 인증 지갑의 온체인 캠페인",
+    template: "%s | WADANG",
   },
   description:
     "기간과 정원을 정해 마당을 열고, Dojang 인증 지갑의 참여를 GIWA Sepolia에 기록하는 온체인 캠페인.",

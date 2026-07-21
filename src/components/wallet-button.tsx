@@ -22,7 +22,7 @@ export function WalletButton() {
         type="button"
       >
         {isConnecting ? <LoaderCircle className="spin" size={16} /> : <Wallet size={16} />}
-        {connectors.length === 0 ? "지갑을 찾지 못함" : "지갑 연결"}
+        {connectors.length === 0 ? "사용 가능한 지갑 없음" : "지갑 연결"}
       </button>
     );
   }

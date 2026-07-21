@@ -73,7 +73,7 @@ export default function Home() {
           <div>
             <span className="section-number">一</span>
             <h3>Dojang 상태 조회</h3>
-            <p>참여 버튼을 누르면 컨트랙트가 OnchainVerifier에서 현재 인증을 확인합니다.</p>
+            <p>참여 버튼을 누르면 컨트랙트가 GIWA OnchainVerifier에 현재 인증 상태를 묻습니다.</p>
           </div>
           <div>
             <span className="section-number">二</span>
@@ -83,7 +83,7 @@ export default function Home() {
           <div>
             <span className="section-number">三</span>
             <h3>GIWA에 참여 기록</h3>
-            <p>조건을 통과한 지갑의 참여와 영수증을 GIWA Sepolia에 기록합니다.</p>
+            <p>조건을 통과한 지갑의 참여를 기록하고, Explorer에서 영수증을 확인할 수 있습니다.</p>
           </div>
         </div>
       </section>
@@ -106,7 +106,7 @@ export default function Home() {
               <li><span>02</span>기간·정원·안내문 입력</li>
               <li><span>03</span>트랜잭션 확인 후 링크 공유</li>
             </ol>
-            <Link href="/open" prefetch={false}>운영자 흐름 시작 <ArrowRight size={15} /></Link>
+            <Link href="/open" prefetch={false}>마당 만들기 <ArrowRight size={15} /></Link>
           </article>
           <article className="journey-card participant-card">
             <span className="journey-role">참여자</span>
@@ -126,7 +126,7 @@ export default function Home() {
         <ShieldCheck size={34} />
         <div>
           <span className="eyebrow">외부 앱 연동</span>
-          <h2><code>isEligible</code>로 참여 이력과 현재 인증을 함께 조회합니다.</h2>
+          <h2><code>isEligible</code>로 과거 참여와 현재 Dojang 인증을 함께 확인합니다.</h2>
         </div>
         <Link className="button button-dark button-large" href="/docs#integration" prefetch={false}>
           연동 코드 보기 <CircleCheckBig size={17} />

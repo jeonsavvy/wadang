@@ -5,7 +5,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div>
         <strong>WADANG · 와당</strong>
-        <span>Dojang 인증 지갑이 참여하는 GIWA 온체인 캠페인</span>
+        <span>Dojang 인증 지갑의 참여를 기록하는 GIWA 온체인 캠페인</span>
       </div>
       <div className="footer-links">
         <Link href="/gasok" prefetch={false}>GASOK 제출자료</Link>

@@ -9,7 +9,7 @@ const routes = [
   ["home", "/", ".hero"],
   ["open", "/open", "main h1"],
   ["manage", "/manage", "main h1"],
-  ["madang", "/madang/1", ".campaign-detail-shell"],
+  ["madang", "/madang/1", ".campaign-overview"],
   ["docs", "/docs", ".docs-page h1"],
   ["deck", "/deck", ".deck-cover"],
   ["team", "/team", ".profile-sheet"],
