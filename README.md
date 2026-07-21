@@ -5,10 +5,7 @@ GASOK Track 03 · GIWA-NATIVE IDEAS 출품작
 
 WADANG은 Dojang의 지갑 검증 결과에 기간, 정원, 지갑당 한 번의 참여 규칙을 더합니다. 참여 결과는 GIWA에 기록되며, 다른 앱은 `isEligible`을 호출해 해당 지갑의 현재 접근 자격을 확인할 수 있습니다.
 
-캠페인은 이 구조를 보여주는 첫 사용 사례입니다. 운영자는 마당을 열고 공유 링크를 만들며, 참여자는 Playground 테스트 인증을 확인받은 뒤 입장합니다.
-
-- 작동 앱: [wadang.jeonsavvy.workers.dev](https://wadang.jeonsavvy.workers.dev)
-- GASOK 제출자료: [wadang.jeonsavvy.workers.dev/gasok](https://wadang.jeonsavvy.workers.dev/gasok)
+캠페인은 이 구조를 보여주는 첫 사용 사례입니다. 운영자는 마당을 열고 공유 링크를 만들며, 참여자는 Playground 테스트 인증을 확인받은 뒤 입장합니다. [배포된 앱에서 전체 흐름을 직접 확인할 수 있습니다.](https://wadang.jeonsavvy.workers.dev)
 
 ## 역할
 
