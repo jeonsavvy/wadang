@@ -33,7 +33,7 @@ export default function GasokPage() {
         </div>
         <div>
           <StatusPill tone="live">GIWA Sepolia 검증 완료</StatusPill>
-          <p>실행 가능한 MVP, 팀 소개, 기술문서와 공개 소스를 한곳에 모았습니다. WADANG은 Dojang 인증 지갑의 참여를 기록하고, 외부 앱이 그 기록과 현재 인증을 함께 조회하게 합니다.</p>
+          <p>WADANG은 Dojang 인증 지갑의 참여를 GIWA Sepolia에 기록합니다. 캠페인 생성·참여·현재 자격 조회와 운영자 취소 결과를 공개 영수증으로 확인할 수 있습니다.</p>
         </div>
       </div>
 
@@ -49,35 +49,35 @@ export default function GasokPage() {
           <FileText size={28} />
           <span>PITCH DECK · 9 PAGES</span>
           <h2>피치덱</h2>
-          <p>문제, Dojang과 WADANG의 역할, 테스트넷 실행 결과와 90일 계획을 담았습니다.</p>
+          <p>Dojang 인증에 기간·정원·중복 규칙을 적용하고, 참여 기록을 외부 앱의 접근 조건으로 조회하는 구조를 제안합니다.</p>
           <a className="text-link" href="/artifacts/wadang-pitch-deck.pdf">PDF 열기 <ExternalLink size={12} /></a>
         </article>
         <article className="gasok-card">
           <UserRound size={28} />
           <span>TEAM PROFILE · 1 PAGE</span>
           <h2>팀 소개</h2>
-          <p>전찬혁의 역할, 학력, 경력과 공개 활동을 한 페이지로 정리했습니다.</p>
+          <p>전찬혁이 제품 기획, 스마트 컨트랙트, 프론트엔드, 테스트와 기술문서를 맡았습니다.</p>
           <a className="text-link" href="/artifacts/wadang-team-profile.pdf">PDF 열기 <ExternalLink size={12} /></a>
         </article>
         <article className="gasok-card">
           <ShieldCheck size={28} />
           <span>TECHNICAL DOCUMENT</span>
           <h2>기술문서</h2>
-          <p>컨트랙트 API, <code>isEligible</code> 연동, attester 선택, 테스트와 보안 경계를 설명합니다.</p>
+          <p><code>createCampaign</code>·<code>claim</code>·<code>isEligible</code>의 동작과 attester·보안 경계를 코드와 테스트 결과로 확인합니다.</p>
           <Link className="text-link" href="/docs" prefetch={false}>웹 문서 열기 <ArrowRight size={12} /></Link>
         </article>
         <article className="gasok-card">
           <Code2 size={28} />
           <span>PUBLIC SOURCE</span>
           <h2>GitHub</h2>
-          <p>컨트랙트, 프론트엔드, 테스트와 Cloudflare 배포 구성을 공개합니다.</p>
+          <p>Solidity 컨트랙트, Next.js 프론트엔드, 테스트와 Cloudflare 배포 구성이 들어 있습니다.</p>
           <a className="text-link" href={repositoryUrl} rel="noreferrer" target="_blank">저장소 열기 <ExternalLink size={12} /></a>
         </article>
         <article className="gasok-card">
           <ShieldCheck size={28} />
           <span>VERIFIED CONTRACT</span>
           <h2>GIWA Explorer</h2>
-          <p>배포 주소, 검증된 소스와 테스트넷 트랜잭션을 Explorer에서 확인할 수 있습니다.</p>
+          <p>배포 주소에서 검증된 소스와 캠페인 생성·참여·취소 트랜잭션을 조회합니다.</p>
           <a className="text-link" href={`${explorerUrl}/address/${wadangAddress}#code`} rel="noreferrer" target="_blank">검증된 소스 열기 <ExternalLink size={12} /></a>
         </article>
       </section>

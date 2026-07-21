@@ -123,7 +123,7 @@ export default function DeckPage() {
         <DeckChrome number={9}>
           <div className="deck-tag">TEAM & ASK</div>
           <div className="deck-team-grid">
-            <div><h2>전찬혁<br /><em>JEON CHAN HYUK</em></h2><p>Product · Smart Contract · Frontend</p><div className="deck-proof-list"><span>Coupang Catalog Operation</span><span>NAVER billboard.js contributor</span><span>14 contract tests</span><span>Public source · technical docs</span></div></div>
+            <div><h2>전찬혁<br /><em>JEON CHAN HYUK</em></h2><p>기획 · 스마트 컨트랙트 · 프론트엔드 구현</p><div className="deck-proof-list"><span>Coupang Catalog Operation</span><span>NAVER billboard.js contributor</span><span>14 contract tests</span><span>Public source · technical docs</span></div></div>
             <div className="deck-ask"><small>SUPPORT REQUEST</small><h3>GIWA Wallet UX 리뷰</h3><h3>Attester 운영 가이드</h3><h3>생태계 파일럿 파트너 1곳</h3><p>GIWA Wallet에서 캠페인을 찾고 참여하는 흐름, 인증 만료·취소 안내와 첫 파일럿 운영을 GIWA 팀과 함께 검토하고 싶습니다.</p></div>
           </div>
           <div className="deck-end"><WadangMark size={22} /> WADANG · Dojang 인증 지갑의 참여를 기록하는 온체인 마당</div>

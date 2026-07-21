@@ -15,9 +15,7 @@ export default function TeamPage() {
 
         <section className="profile-hero">
           <div>
-            <span className="eyebrow">PRODUCT · SMART CONTRACT · FRONTEND</span>
             <h1>전찬혁<small>JEON CHAN HYUK</small></h1>
-            <p>Republic of Korea</p>
           </div>
           <div className="profile-photo">
             <Image alt="전찬혁 증명사진" fill priority sizes="42mm" src="/team/jeon-chan-hyuk.png" unoptimized />
