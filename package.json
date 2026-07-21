@@ -20,6 +20,7 @@
     "e2e:testnet": "hardhat run scripts/testnet-e2e.ts --network giwaSepolia",
     "export:pdfs": "node scripts/export-pdfs.mjs",
     "capture:qa": "node scripts/capture-qa.mjs",
+    "check:release": "node scripts/check-release.mjs",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm test:contracts && pnpm build && pnpm build:cloudflare"
   },

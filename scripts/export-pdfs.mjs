@@ -15,16 +15,19 @@ try {
   const artifacts = [
     {
       route: "/deck",
+      readySelector: ".deck-cover",
       filename: "wadang-pitch-deck.pdf",
       options: { width: "13.333in", height: "7.5in", preferCSSPageSize: true },
     },
     {
       route: "/team",
+      readySelector: ".profile-sheet",
       filename: "wadang-team-profile.pdf",
       options: { format: "A4", preferCSSPageSize: true },
     },
     {
       route: "/docs",
+      readySelector: ".docs-page h1",
       filename: "wadang-technical-docs.pdf",
       options: {
         format: "A4",
@@ -35,11 +38,18 @@ try {
 
   for (const artifact of artifacts) {
     const response = await page.goto(`${baseUrl}${artifact.route}`, {
-      waitUntil: "networkidle",
+      waitUntil: "domcontentloaded",
     });
     if (!response?.ok()) {
       throw new Error(`${artifact.route} returned ${response?.status() ?? "no response"}`);
     }
+    await page.locator(artifact.readySelector).waitFor({ state: "visible" });
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      await new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
+      });
+    });
     await page.pdf({
       path: resolve(outputDir, artifact.filename),
       printBackground: true,

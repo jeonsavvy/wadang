@@ -87,6 +87,26 @@ pnpm test:e2e
 
 컨트랙트 테스트는 입력 경계, 인증·미인증·중복, 시작·종료 시각, 정원, 취소 권한, 인증 변경, verifier 오류와 외부 접근 연동을 확인합니다.
 
+## Worker 릴리스
+
+PDF 3종과 팀 사진은 제출용 비버전 자산이므로 Git에 커밋하지 않습니다. 배포 전 아래 파일이 모두 있는지 확인합니다.
+
+```powershell
+Get-Item public/artifacts/wadang-pitch-deck.pdf
+Get-Item public/artifacts/wadang-team-profile.pdf
+Get-Item public/artifacts/wadang-technical-docs.pdf
+Get-Item public/team/jeon-chan-hyuk.png
+```
+
+필수 자산 확인 → **Linux에서** `pnpm build:cloudflare` → `pnpm exec wrangler deploy --dry-run`과 로컬 preview → `pnpm exec wrangler deploy` → 아래 release smoke 순서로 진행합니다. Cloudflare Git Build의 production deploy command는 `npx wrangler versions upload`로 유지해 push가 활성 배포를 자동 교체하지 않게 합니다.
+
+```powershell
+$env:RELEASE_BASE_URL="https://wadang.jeonsavvy.workers.dev"
+pnpm check:release
+```
+
+`check:release`는 앱 8개 경로와 PDF 3종·팀 사진의 HTTP 상태, 콘텐츠 타입, 최소 크기를 검사하고 비버전 자산의 배포본 SHA-256이 로컬 원본과 같은지 확인합니다.
+
 ## 테스트넷 설정
 
 ```powershell

@@ -6,14 +6,14 @@ import { chromium } from "@playwright/test";
 const baseUrl = process.env.QA_BASE_URL ?? "http://127.0.0.1:3000";
 const outputDir = resolve("tmp", "qa-web");
 const routes = [
-  ["home", "/"],
-  ["open", "/open"],
-  ["manage", "/manage"],
-  ["madang", "/madang/1"],
-  ["docs", "/docs"],
-  ["deck", "/deck"],
-  ["team", "/team"],
-  ["gasok", "/gasok"],
+  ["home", "/", ".hero"],
+  ["open", "/open", "main h1"],
+  ["manage", "/manage", "main h1"],
+  ["madang", "/madang/1", ".campaign-detail-shell"],
+  ["docs", "/docs", ".docs-page h1"],
+  ["deck", "/deck", ".deck-cover"],
+  ["team", "/team", ".profile-sheet"],
+  ["gasok", "/gasok", ".gasok-grid"],
 ];
 const viewports = [
   ["desktop", { width: 1440, height: 1000 }],
@@ -28,11 +28,16 @@ const browser = await chromium.launch({
 try {
   for (const [viewportName, viewport] of viewports) {
     const page = await browser.newPage({ viewport });
-    for (const [routeName, route] of routes) {
-      const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle" });
+    for (const [routeName, route, readySelector] of routes) {
+      const response = await page.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
       if (!response?.ok()) throw new Error(`${route} returned ${response?.status() ?? "no response"}`);
-      await page.evaluate(() => document.fonts.ready);
-      await page.waitForTimeout(250);
+      await page.locator(readySelector).waitFor({ state: "visible" });
+      await page.evaluate(async () => {
+        await document.fonts.ready;
+        await new Promise((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(resolve));
+        });
+      });
       await page.screenshot({
         path: resolve(outputDir, `${viewportName}-${routeName}.png`),
         fullPage: true,
