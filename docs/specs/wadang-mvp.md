@@ -2,7 +2,7 @@
 
 ## 시스템 구조
 
-브라우저가 지갑과 GIWA Sepolia RPC에 직접 연결합니다. Dojang은 지갑의 현재 인증 상태를 제공하고, `WadangCampaigns`는 참여 규칙과 이력을 관리합니다. 외부 앱은 `isEligible`로 접근 가능 여부를 조회합니다. Cloudflare Worker는 화면과 제출용 정적 문서만 제공합니다.
+브라우저가 지갑과 GIWA Sepolia RPC에 직접 연결합니다. Dojang은 지갑의 현재 인증 상태를 제공하고, `WadangCampaigns`는 참여 규칙과 이력을 관리합니다. 외부 앱은 `isEligible`로 접근 가능 여부를 조회합니다. Cloudflare Worker는 화면과 정적 문서만 제공합니다.
 
 ```mermaid
 flowchart LR
