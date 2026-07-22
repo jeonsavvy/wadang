@@ -21,11 +21,9 @@
 /.open-next
 /.wrangler
 
-# private submission sources and generated release assets
+# private application materials
 /docs/application/
 /docs/submission-evidence.md
-/public/artifacts/
-/public/team/jeon-chan-hyuk.png
 
 # next.js
 /.next/
