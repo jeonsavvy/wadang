@@ -154,13 +154,14 @@ export function MadangDetail({ id }: { id: string }) {
 
   return (
     <main className="page-shell container campaign-detail-shell">
-      {!wadangAddress && (
-        <div className="notice preview-notice"><CircleAlert size={19} /><div><strong>테스트넷 배포 전</strong>WADANG 컨트랙트 주소가 설정되면 실제 캠페인 데이터를 표시합니다.</div></div>
-      )}
-      {campaignRead.isLoading && wadangAddress && <div className="empty-state"><LoaderCircle className="spin" />마당 #{id}을 읽는 중…</div>}
-      {campaignRead.error && <div className="error-box">마당을 읽지 못했습니다. 링크의 마당 ID와 GIWA RPC 상태를 확인해 주세요.</div>}
-      {campaign && (
-        <>
+      <div className="campaign-detail-content">
+        {!wadangAddress && (
+          <div className="notice preview-notice"><CircleAlert size={19} /><div><strong>테스트넷 배포 전</strong>WADANG 컨트랙트 주소가 설정되면 실제 캠페인 데이터를 표시합니다.</div></div>
+        )}
+        {campaignRead.isLoading && wadangAddress && <div className="empty-state"><LoaderCircle className="spin" />마당 #{id}을 읽는 중…</div>}
+        {campaignRead.error && <div className="error-box">마당을 읽지 못했습니다. 링크의 마당 ID와 GIWA RPC 상태를 확인해 주세요.</div>}
+        {campaign && (
+          <>
           <section className="campaign-hero campaign-overview">
             <div className="campaign-overview-main">
               <div className="campaign-kicker">
@@ -228,8 +229,9 @@ export function MadangDetail({ id }: { id: string }) {
               {cancelReceipt.isSuccess && <div className="success-box">캠페인이 닫혔습니다. 기존 참여 기록은 그대로 보존됩니다.</div>}
             </aside>
           </section>
-        </>
-      )}
+          </>
+        )}
+      </div>
       <div className="back-row"><Link className="text-link" href="/manage">← 내 마당으로</Link></div>
     </main>
   );

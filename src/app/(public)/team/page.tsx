@@ -18,7 +18,7 @@ export default function TeamPage() {
             <h1>전찬혁<small>JEON CHAN HYUK</small></h1>
           </div>
           <div className="profile-photo">
-            <Image alt="전찬혁 증명사진" fill priority sizes="42mm" src="/team/jeon-chan-hyuk.png" unoptimized />
+            <Image alt="전찬혁 증명사진" fill priority sizes="(max-width: 820px) 125px, 42mm" src="/team/jeon-chan-hyuk.webp" unoptimized />
           </div>
         </section>
 

@@ -26,6 +26,9 @@ async function gotoReady(page: Page, path: string, readySelector: string) {
 for (const route of routes) {
   test(`${route.path} renders without horizontal overflow`, async ({ page }) => {
     await gotoReady(page, route.path, route.ready);
+    if (route.path === "/team") {
+      await expect(page.locator(".profile-photo img")).toHaveAttribute("src", /jeon-chan-hyuk\.webp/);
+    }
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(1);
   });
@@ -70,6 +73,8 @@ test.describe("product states", () => {
 
     await gotoReady(page, "/madang/1", ".campaign-detail-shell");
     await expect(page.getByText("마당 #1을 읽는 중…")).toBeVisible();
+    const footerTop = await page.locator(".site-footer").evaluate((element) => element.getBoundingClientRect().top);
+    expect(footerTop).toBeGreaterThanOrEqual(page.viewportSize()?.height ?? 0);
   });
 
   test("campaign RPC failure names the failed dependency", async ({ page }) => {

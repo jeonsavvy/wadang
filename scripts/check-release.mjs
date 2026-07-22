@@ -41,11 +41,11 @@ const releaseAssets = [
     minimumBytes: 100_000,
   },
   {
-    path: "/team/jeon-chan-hyuk.png",
-    localPath: "public/team/jeon-chan-hyuk.png",
-    contentType: "image/png",
-    minimumBytes: 100_000,
-    maximumBytes: 500_000,
+    path: "/team/jeon-chan-hyuk.webp",
+    localPath: "public/team/jeon-chan-hyuk.webp",
+    contentType: "image/webp",
+    minimumBytes: 10_000,
+    maximumBytes: 100_000,
   },
 ];
 
