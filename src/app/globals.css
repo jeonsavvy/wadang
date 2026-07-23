@@ -95,7 +95,31 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.wallet-menu { position: relative; }
+.wallet-connect, .wallet-menu { position: relative; }
+.wallet-connect { display: grid; justify-items: end; }
+.wallet-feedback {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(290px, calc(100vw - 28px));
+  padding: 15px;
+  border: 1px solid var(--ink);
+  background: var(--porcelain);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.wallet-feedback a {
+  width: fit-content;
+  color: var(--cinnabar-dark);
+  font-weight: 850;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 .wallet-menu summary { list-style: none; }
 .wallet-menu summary::-webkit-details-marker { display: none; }
 .wallet-popover { position: absolute; top: calc(100% + 10px); right: 0; width: 210px; padding: 15px; border: 1px solid var(--ink); background: var(--porcelain); box-shadow: var(--shadow); display: grid; gap: 12px; font-size: 10px; }

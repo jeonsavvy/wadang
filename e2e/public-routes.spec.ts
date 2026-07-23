@@ -43,6 +43,65 @@ test("public pages defer wallet runtime until the product flow", async ({ page }
   await expect(page.getByRole("button", { name: "지갑 연결" })).toBeVisible();
 });
 
+test("mobile browsers without a wallet open the current route in MetaMask", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile");
+
+  await page.route("https://link.metamask.io/**", (route) =>
+    route.fulfill({ contentType: "text/html", body: "<title>MetaMask handoff</title>" }),
+  );
+  await gotoReady(page, "/open", "main h1");
+  await page.getByRole("button", { name: "지갑 연결" }).click();
+
+  await expect(page).toHaveURL("https://link.metamask.io/dapp/127.0.0.1:3100/open");
+});
+
+test("desktop browsers without a wallet show an actionable recovery", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop");
+
+  await gotoReady(page, "/open", "main h1");
+  await page.getByRole("button", { name: "지갑 연결" }).click();
+
+  await expect(page.getByRole("status")).toContainText("브라우저 지갑을 찾지 못했습니다.");
+  await expect(page.getByRole("link", { name: "MetaMask 설치" })).toHaveAttribute(
+    "href",
+    "https://metamask.io/download/",
+  );
+});
+
+test("an injected wallet still connects inside a wallet browser", async ({ page }) => {
+  const address = "0x00000000000000000000000000000000000a5733";
+  await page.addInitScript(
+    ({ account, chainId }) => {
+      Object.defineProperty(window, "ethereum", {
+        configurable: true,
+        value: {
+          on() {},
+          removeListener() {},
+          async request({ method }: { method: string }) {
+            if (method === "eth_chainId") return chainId;
+            if (method === "eth_accounts" || method === "eth_requestAccounts") return [account];
+            if (method === "wallet_requestPermissions") {
+              return [
+                {
+                  caveats: [{ type: "restrictReturnedAccounts", value: [account] }],
+                  parentCapability: "eth_accounts",
+                },
+              ];
+            }
+            return null;
+          },
+        },
+      });
+    },
+    { account: address, chainId: "0x164ce" },
+  );
+
+  await gotoReady(page, "/open", "main h1");
+  await page.getByRole("button", { name: "지갑 연결" }).click();
+
+  await expect(page.locator(".wallet-menu summary")).toContainText("0x00000…A5733");
+});
+
 test("keyboard users can skip directly to page content", async ({ page }) => {
   await gotoReady(page, "/", ".hero");
   await page.keyboard.press("Tab");
