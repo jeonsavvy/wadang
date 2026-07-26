@@ -371,14 +371,25 @@ describe("WadangCampaigns", async function () {
     );
   });
 
-  it("propagates verifier failures instead of treating them as verification", async function () {
-    const { verifier, campaigns, verifiedCampaigns } = await deployFixture();
+  it("propagates verifier failures through claims and existing eligibility", async function () {
+    const { verifier, campaigns, verifiedCampaigns, secondVerifiedCampaigns } =
+      await deployFixture();
     await createActiveCampaign(campaigns);
+    await verifiedCampaigns.write.claim([1n]);
     await verifier.write.setShouldRevert([true]);
 
-    await assert.rejects(verifiedCampaigns.write.claim([1n]));
+    await viem.assertions.revertWithCustomError(
+      campaigns.read.isEligible([1n, verifiedWallet.account.address]),
+      verifier,
+      "VerifierFailure",
+    );
+    await viem.assertions.revertWithCustomError(
+      secondVerifiedCampaigns.write.claim([1n]),
+      verifier,
+      "VerifierFailure",
+    );
     assert.equal(
-      await campaigns.read.hasClaimed([1n, verifiedWallet.account.address]),
+      await campaigns.read.hasClaimed([1n, secondVerifiedWallet.account.address]),
       false,
     );
   });
