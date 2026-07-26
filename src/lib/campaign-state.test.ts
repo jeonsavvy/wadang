@@ -4,6 +4,9 @@ import {
   formatContractError,
   getCampaignPhase,
   getParticipationStep,
+  hasClaimedForCurrentAccount,
+  isMutationForCurrentAccount,
+  isReceiptForCurrentAccount,
 } from "./campaign-state";
 
 const campaign = {
@@ -51,5 +54,43 @@ describe("getParticipationStep", () => {
     expect(getParticipationStep({ isConnected: true, onGiwaSepolia: true, phase: "active", isVerified: false, hasClaimed: false })).toBe("verify");
     expect(getParticipationStep({ isConnected: true, onGiwaSepolia: true, phase: "active", isVerified: true, hasClaimed: false })).toBe("claim");
     expect(getParticipationStep({ isConnected: true, onGiwaSepolia: true, phase: "ended", isVerified: false, hasClaimed: true })).toBe("receipt");
+  });
+});
+
+describe("receipt account ownership", () => {
+  const alice = "0x1111111111111111111111111111111111111111" as const;
+  const bob = "0x2222222222222222222222222222222222222222" as const;
+
+  it("accepts a successful receipt only for the current account", () => {
+    expect(isReceiptForCurrentAccount(alice, alice)).toBe(true);
+    expect(hasClaimedForCurrentAccount({
+      onchainClaimed: false,
+      currentAccount: alice,
+      receiptFrom: alice,
+    })).toBe(true);
+  });
+
+  it("does not carry an optimistic receipt to a different or disconnected account", () => {
+    expect(isReceiptForCurrentAccount(bob, alice)).toBe(false);
+    expect(isReceiptForCurrentAccount(undefined, alice)).toBe(false);
+    expect(hasClaimedForCurrentAccount({
+      onchainClaimed: false,
+      currentAccount: bob,
+      receiptFrom: alice,
+    })).toBe(false);
+  });
+
+  it("does not expose a mutation after an account switch, disconnect, or reset", () => {
+    expect(isMutationForCurrentAccount(bob, alice)).toBe(false);
+    expect(isMutationForCurrentAccount(undefined, alice)).toBe(false);
+    expect(isMutationForCurrentAccount(alice, undefined)).toBe(false);
+  });
+
+  it("keeps an on-chain claim authoritative regardless of receipt ownership", () => {
+    expect(hasClaimedForCurrentAccount({
+      onchainClaimed: true,
+      currentAccount: bob,
+      receiptFrom: alice,
+    })).toBe(true);
   });
 });

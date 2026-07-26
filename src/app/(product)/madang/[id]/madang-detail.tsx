@@ -10,8 +10,8 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
-import { getAddress, isAddressEqual, zeroAddress, zeroHash } from "viem";
+import { useEffect, useReducer } from "react";
+import { getAddress, isAddressEqual, type Address, zeroAddress, zeroHash } from "viem";
 import {
   useAccount,
   useReadContract,
@@ -27,6 +27,9 @@ import {
   formatDate,
   getCampaignPhase,
   getParticipationStep,
+  hasClaimedForCurrentAccount,
+  isMutationForCurrentAccount,
+  isReceiptForCurrentAccount,
   phaseLabels,
   shortenAddress,
 } from "@/lib/campaign-state";
@@ -48,6 +51,10 @@ const actionLabels = {
   claim: "입장하기",
   receipt: "입장 완료",
 } as const;
+
+function mutationOwnerReducer(_: Address | undefined, owner: Address | undefined) {
+  return owner;
+}
 
 export function MadangDetail({ id }: { id: string }) {
   const now = useCurrentUnixTime();
@@ -96,8 +103,19 @@ export function MadangDetail({ id }: { id: string }) {
   const claimReceipt = useWaitForTransactionReceipt({ hash: claimWrite.data });
   const cancelWrite = useWriteContract();
   const cancelReceipt = useWaitForTransactionReceipt({ hash: cancelWrite.data });
+  const [claimOwner, setClaimOwner] = useReducer(mutationOwnerReducer, undefined);
+  const [cancelOwner, setCancelOwner] = useReducer(mutationOwnerReducer, undefined);
+  const resetClaim = claimWrite.reset;
+  const resetCancel = cancelWrite.reset;
   const refetchClaimed = claimedRead.refetch;
   const refetchCampaign = campaignRead.refetch;
+
+  useEffect(() => {
+    setClaimOwner(undefined);
+    setCancelOwner(undefined);
+    resetClaim();
+    resetCancel();
+  }, [address, resetCancel, resetClaim]);
 
   useEffect(() => {
     if (claimReceipt.isSuccess) {
@@ -116,7 +134,31 @@ export function MadangDetail({ id }: { id: string }) {
     address && campaign && isAddressEqual(address, campaign.organizer),
   );
   const isVerified = verificationRead.data;
-  const hasClaimed = claimedRead.data === true || claimReceipt.isSuccess;
+  const claimReceiptForCurrentAccount = Boolean(
+    claimReceipt.isSuccess && isReceiptForCurrentAccount(address, claimReceipt.data?.from),
+  );
+  const cancelReceiptForCurrentAccount = Boolean(
+    cancelReceipt.isSuccess && isReceiptForCurrentAccount(address, cancelReceipt.data?.from),
+  );
+  const hasClaimed = hasClaimedForCurrentAccount({
+    onchainClaimed: claimedRead.data === true,
+    currentAccount: address,
+    receiptFrom: claimReceipt.isSuccess ? claimReceipt.data?.from : undefined,
+  });
+  const claimForCurrentAccount = isMutationForCurrentAccount(address, claimOwner);
+  const cancelForCurrentAccount = isMutationForCurrentAccount(address, cancelOwner);
+  const claimPending = claimForCurrentAccount && (
+    claimWrite.isPending || claimReceipt.isLoading
+  );
+  const cancelPending = cancelForCurrentAccount && (
+    cancelWrite.isPending || cancelReceipt.isLoading
+  );
+  const claimError = claimForCurrentAccount
+    ? claimWrite.error ?? claimReceipt.error
+    : undefined;
+  const cancelError = cancelForCurrentAccount
+    ? cancelWrite.error ?? cancelReceipt.error
+    : undefined;
   const step = phase
     ? getParticipationStep({
         isConnected,
@@ -126,10 +168,10 @@ export function MadangDetail({ id }: { id: string }) {
         hasClaimed,
       })
     : "unavailable";
-  const claimPending = claimWrite.isPending || claimReceipt.isLoading;
 
   function claim() {
     if (!wadangAddress || !campaignId || step !== "claim") return;
+    setClaimOwner(address);
     claimWrite.writeContract({
       address: wadangAddress,
       abi: wadangAbi,
@@ -140,6 +182,7 @@ export function MadangDetail({ id }: { id: string }) {
 
   function cancel() {
     if (!wadangAddress || !campaignId || !isOrganizer) return;
+    setCancelOwner(address);
     cancelWrite.writeContract({
       address: wadangAddress,
       abi: wadangAbi,
@@ -199,15 +242,15 @@ export function MadangDetail({ id }: { id: string }) {
                 {isVerified === false && (
                   <div className="error-box">이 지갑의 테스트 인증을 찾지 못했습니다. <a href={playgroundUrl} rel="noreferrer" target="_blank">GIWA Playground 확인 <ExternalLink size={12} /></a></div>
                 )}
-                {hasClaimed && !claimReceipt.isSuccess && <div className="notice compact-notice"><CircleAlert size={17} /><div><strong>이미 입장한 지갑입니다</strong>Explorer에서 기존 참여 기록을 확인할 수 있습니다.</div></div>}
-                {(claimWrite.error || claimReceipt.error) && <div className="error-box" role="alert">{formatContractError(claimWrite.error ?? claimReceipt.error)}</div>}
-                {claimReceipt.isSuccess && claimWrite.data && (
+                {hasClaimed && !claimReceiptForCurrentAccount && <div className="notice compact-notice"><CircleAlert size={17} /><div><strong>이미 입장한 지갑입니다</strong>Explorer에서 기존 참여 기록을 확인할 수 있습니다.</div></div>}
+                {claimError && <div className="error-box" role="alert">{formatContractError(claimError)}</div>}
+                {claimReceiptForCurrentAccount && claimWrite.data && (
                   <div className="receipt-card compact-receipt"><WadangStamp label="ENTRY RECORDED" /><div><strong>입장이 기록되었습니다.</strong><p>참여 트랜잭션이 GIWA Sepolia에 기록됐습니다.</p><a className="text-link" href={`${explorerUrl}/tx/${claimWrite.data}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a></div></div>
                 )}
 
                 <button className="button button-accent button-large claim-button" disabled={!wadangAddress || step !== "claim" || claimPending} onClick={claim} type="button">
                   {claimPending ? <LoaderCircle className="spin" size={18} /> : <TicketCheck size={18} />}
-                  {claimWrite.isPending ? "지갑에서 확인" : claimReceipt.isLoading ? "GIWA에 기록 중" : actionLabels[step]}
+                  {claimForCurrentAccount && claimWrite.isPending ? "지갑에서 확인" : claimForCurrentAccount && claimReceipt.isLoading ? "GIWA에 기록 중" : actionLabels[step]}
                 </button>
               </div>
             </div>
@@ -223,10 +266,10 @@ export function MadangDetail({ id }: { id: string }) {
               </dl>
               {wadangAddress && <a className="text-link" href={`${explorerUrl}/address/${wadangAddress}`} rel="noreferrer" target="_blank">컨트랙트 살펴보기 ↗</a>}
               {isOrganizer && phase !== "canceled" && (
-                <button className="cancel-button" disabled={cancelWrite.isPending || cancelReceipt.isLoading} onClick={cancel} type="button"><XCircle size={15} />마당 닫기</button>
+                <button className="cancel-button" disabled={cancelPending} onClick={cancel} type="button"><XCircle size={15} />마당 닫기</button>
               )}
-              {(cancelWrite.error || cancelReceipt.error) && <div className="error-box">{formatContractError(cancelWrite.error ?? cancelReceipt.error)}</div>}
-              {cancelReceipt.isSuccess && <div className="success-box">캠페인이 닫혔습니다. 기존 참여 기록은 그대로 보존됩니다.</div>}
+              {cancelError && <div className="error-box">{formatContractError(cancelError)}</div>}
+              {cancelReceiptForCurrentAccount && <div className="success-box">캠페인이 닫혔습니다. 기존 참여 기록은 그대로 보존됩니다.</div>}
             </aside>
           </section>
           </>

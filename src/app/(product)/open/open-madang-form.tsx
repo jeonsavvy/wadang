@@ -8,7 +8,8 @@ import {
   LockKeyhole,
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useReducer, useState, type FormEvent } from "react";
+import type { Address } from "viem";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 import { WadangStamp } from "@/components/wadang-mark";
@@ -19,13 +20,21 @@ import {
   utf8ByteLength,
   validateCampaignDraft,
 } from "@/lib/campaign-form";
-import { formatContractError } from "@/lib/campaign-state";
+import {
+  formatContractError,
+  isMutationForCurrentAccount,
+  isReceiptForCurrentAccount,
+} from "@/lib/campaign-state";
 import { getCreatedCampaignId, wadangAbi, wadangAddress } from "@/lib/contract";
 
 function localInputValue(offsetHours: number) {
   const date = new Date(Date.now() + offsetHours * 60 * 60 * 1000);
   const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
   return local.toISOString().slice(0, 16);
+}
+
+function mutationOwnerReducer(_: Address | undefined, owner: Address | undefined) {
+  return owner;
 }
 
 export function OpenMadangForm() {
@@ -36,8 +45,14 @@ export function OpenMadangForm() {
   const [details, setDetails] = useState("");
   const [startsAt, setStartsAt] = useState(() => localInputValue(0));
   const [endsAt, setEndsAt] = useState(() => localInputValue(72));
-  const { data: hash, error, isPending, writeContract } = useWriteContract();
+  const { data: hash, error, isPending, reset, writeContract } = useWriteContract();
   const receipt = useWaitForTransactionReceipt({ hash });
+  const [createOwner, setCreateOwner] = useReducer(mutationOwnerReducer, undefined);
+
+  useEffect(() => {
+    setCreateOwner(undefined);
+    reset();
+  }, [address, reset]);
 
   const prerequisite = useMemo(() => {
     if (!wadangAddress) return "WADANG 테스트넷 컨트랙트 주소를 설정해야 캠페인을 만들 수 있습니다.";
@@ -46,7 +61,19 @@ export function OpenMadangForm() {
     return undefined;
   }, [chainId, isConnected]);
 
-  const createdId = receipt.data ? getCreatedCampaignId(receipt.data.logs) : undefined;
+  const receiptForCurrentAccount = Boolean(
+    receipt.isSuccess && isReceiptForCurrentAccount(address, receipt.data?.from),
+  );
+  const createForCurrentAccount = isMutationForCurrentAccount(
+    address,
+    createOwner,
+  );
+  const createWalletPending = createForCurrentAccount && isPending;
+  const createReceiptPending = createForCurrentAccount && receipt.isLoading;
+  const createError = createForCurrentAccount ? error ?? receipt.error : undefined;
+  const createdId = receiptForCurrentAccount && receipt.data
+    ? getCreatedCampaignId(receipt.data.logs)
+    : undefined;
   const sharePath = createdId ? `/madang/${createdId}` : undefined;
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -69,6 +96,7 @@ export function OpenMadangForm() {
       return;
     }
 
+    setCreateOwner(address);
     writeContract({
       address: wadangAddress,
       abi: wadangAbi,
@@ -89,7 +117,7 @@ export function OpenMadangForm() {
     setCopied(true);
   }
 
-  const visibleError = formError ?? (error ? formatContractError(error) : undefined);
+  const visibleError = formError ?? (createError ? formatContractError(createError) : undefined);
 
   return (
     <section>
@@ -138,9 +166,9 @@ export function OpenMadangForm() {
 
           <div className="form-actions">
             <p><strong>생성 후 삭제할 수 없습니다.</strong> 입력을 잘못한 경우 운영자 지갑으로 마당을 닫을 수 있습니다.</p>
-            <button className="button button-accent button-large" disabled={Boolean(prerequisite) || isPending || receipt.isLoading} type="submit">
-              {isPending || receipt.isLoading ? <LoaderCircle className="spin" size={17} /> : <LockKeyhole size={17} />}
-              {isPending ? "지갑에서 확인" : receipt.isLoading ? "GIWA에 기록 중" : "마당 만들기"}
+            <button className="button button-accent button-large" disabled={Boolean(prerequisite) || createWalletPending || createReceiptPending} type="submit">
+              {createWalletPending || createReceiptPending ? <LoaderCircle className="spin" size={17} /> : <LockKeyhole size={17} />}
+              {createWalletPending ? "지갑에서 확인" : createReceiptPending ? "GIWA에 기록 중" : "마당 만들기"}
             </button>
           </div>
         </form>
@@ -158,7 +186,7 @@ export function OpenMadangForm() {
         </aside>
       </div>
 
-      {receipt.isSuccess && hash && (
+      {receiptForCurrentAccount && hash && (
         <div className="receipt-card create-receipt" role="status">
           <WadangStamp label="MADANG OPEN" />
           <div>

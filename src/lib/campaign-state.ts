@@ -1,3 +1,5 @@
+import { isAddressEqual, type Address } from "viem";
+
 import type { Campaign } from "./contract";
 
 export type CampaignPhase =
@@ -50,6 +52,33 @@ export function getParticipationStep(input: {
   if (input.phase !== "active") return "unavailable";
   if (input.isVerified !== true) return "verify";
   return "claim";
+}
+
+export function isReceiptForCurrentAccount(
+  currentAccount: Address | undefined,
+  receiptFrom: Address | undefined,
+) {
+  return Boolean(
+    currentAccount && receiptFrom && isAddressEqual(currentAccount, receiptFrom),
+  );
+}
+
+export function isMutationForCurrentAccount(
+  currentAccount: Address | undefined,
+  initiatingAccount: Address | undefined,
+) {
+  return isReceiptForCurrentAccount(currentAccount, initiatingAccount);
+}
+
+export function hasClaimedForCurrentAccount(input: {
+  onchainClaimed: boolean;
+  currentAccount: Address | undefined;
+  receiptFrom: Address | undefined;
+}) {
+  return input.onchainClaimed || isReceiptForCurrentAccount(
+    input.currentAccount,
+    input.receiptFrom,
+  );
 }
 
 export function formatContractError(error: unknown) {
