@@ -264,7 +264,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 .field-full { grid-column: 1 / -1; }
 .field label { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; font-size: 11px; font-weight: 850; }
 .field label span { color: var(--muted); font-size: 8px; font-weight: 650; }
-.field input, .field textarea { width: 100%; border: 1px solid var(--line); border-radius: 0; background: var(--porcelain); color: var(--ink); }
+.field input, .field textarea { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 0; background: var(--porcelain); color: var(--ink); }
 .field input { min-height: 50px; padding: 0 14px; }
 .field textarea { min-height: 120px; padding: 14px; resize: vertical; line-height: 1.65; }
 .field input::placeholder, .field textarea::placeholder { color: #8a887f; }
@@ -860,6 +860,11 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
   .profile-main, .profile-grid aside { gap: 28px; }
   .profile-grid a { min-height: 44px; }
   .profile-entry { grid-template-columns: 96px 1fr; gap: 6px 18px; }
+}
+
+@media screen and (max-width: 360px) {
+  .site-header { grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; }
+  .site-header .button { padding-inline: 10px; }
 }
 
 @page deck { size: 13.333in 7.5in; margin: 0; }

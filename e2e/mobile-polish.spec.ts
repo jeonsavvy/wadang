@@ -76,7 +76,7 @@ test.describe("mobile navigation and accessibility polish", () => {
     await gotoReady(page, "/", ".hero");
 
     const header = page.locator(".site-header");
-    const brandBox = await header.locator(".wordmark").boundingBox();
+    const brandBox = await header.locator(".wordmark span").boundingBox();
     const actionBox = await header.getByRole("link", { name: "마당 열기", exact: true }).boundingBox();
     expect(brandBox).not.toBeNull();
     expect(actionBox).not.toBeNull();
@@ -89,12 +89,14 @@ test.describe("mobile navigation and accessibility polish", () => {
     await installInjectedWallet(page, "0x1", true);
     await gotoReady(page, "/open", "main h1");
 
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+
     const header = page.locator(".site-header");
     await header.getByRole("button", { name: "지갑 연결" }).click();
     const switchButton = header.getByRole("button", { name: "GIWA Sepolia 전환" });
     await expect(switchButton).toBeVisible({ timeout: 15_000 });
 
-    const brandBox = await header.locator(".wordmark").boundingBox();
+    const brandBox = await header.locator(".wordmark span").boundingBox();
     const actionBox = await switchButton.boundingBox();
     await expect(header.locator(".wordmark span")).toHaveCSS("white-space", "nowrap");
     expect((brandBox?.x ?? 0) + (brandBox?.width ?? 0)).toBeLessThanOrEqual(actionBox?.x ?? 0);
