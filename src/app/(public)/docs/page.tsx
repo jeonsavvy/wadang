@@ -16,7 +16,37 @@ import {
 } from "@/lib/contract";
 import { wadangRelease } from "@/lib/release";
 
-export const metadata: Metadata = { title: "기술문서" };
+const title = "기술문서 | WADANG";
+const description =
+  "WadangCampaigns 컨트랙트 API, 참여 규칙, isEligible 연동, 보안 경계와 GIWA Sepolia 실행 결과를 설명합니다.";
+const image = {
+  url: "/wadang-social-card.png",
+  width: 1200,
+  height: 630,
+  alt: "Dojang 인증 지갑의 참여를 온체인에 기록하는 WADANG",
+  type: "image/png",
+};
+
+export const metadata: Metadata = {
+  title: "기술문서",
+  description,
+  alternates: { canonical: "/docs" },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: "WADANG",
+    title,
+    description,
+    url: "/docs",
+    images: [image],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [image],
+  },
+};
 
 const contractApi = [
   ["createCampaign", "입력값을 검증하고 새 캠페인을 생성합니다."],

@@ -16,6 +16,12 @@ const navigation = {
   ],
 } as const;
 
+const mobileNavigation = [
+  { href: "/gasok", label: "제출자료" },
+  { href: "/docs", label: "기술문서" },
+  { href: "/manage", label: "내 마당" },
+] as const;
+
 export function SiteHeader({ action, variant }: { action: ReactNode; variant: keyof typeof navigation }) {
   return (
     <header className="site-header">
@@ -23,9 +29,14 @@ export function SiteHeader({ action, variant }: { action: ReactNode; variant: ke
         <WadangMark size={34} />
         <span>WADANG<small>와당</small></span>
       </Link>
-      <nav aria-label="주요 탐색">
+      <nav aria-label="주요 탐색" className="desktop-nav">
         {navigation[variant].map((item) => (
           <Link href={item.href} key={item.href} prefetch={variant === "public" ? false : null}>{item.label}</Link>
+        ))}
+      </nav>
+      <nav aria-label="모바일 주요 탐색" className="mobile-nav">
+        {mobileNavigation.map((item) => (
+          <Link href={item.href} key={item.href} prefetch={false}>{item.label}</Link>
         ))}
       </nav>
       {action}

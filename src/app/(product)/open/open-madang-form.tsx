@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useReducer, useState, type FormEvent } from "react";
-import type { Address } from "viem";
+import type { Address, Hex } from "viem";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 import { WadangStamp } from "@/components/wadang-mark";
@@ -22,10 +22,12 @@ import {
 } from "@/lib/campaign-form";
 import {
   formatContractError,
+  getCreatedCampaignIdFromReceipt,
+  isAllowedTransactionReplacement,
   isMutationForCurrentAccount,
-  isReceiptForCurrentAccount,
+  isRejectedReplacementForHash,
 } from "@/lib/campaign-state";
-import { getCreatedCampaignId, wadangAbi, wadangAddress } from "@/lib/contract";
+import { wadangAbi, wadangAddress } from "@/lib/contract";
 
 function localInputValue(offsetHours: number) {
   const date = new Date(Date.now() + offsetHours * 60 * 60 * 1000);
@@ -41,12 +43,22 @@ export function OpenMadangForm() {
   const { address, chainId, isConnected } = useAccount();
   const [formError, setFormError] = useState<string>();
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState<string>();
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
   const [startsAt, setStartsAt] = useState(() => localInputValue(0));
   const [endsAt, setEndsAt] = useState(() => localInputValue(72));
   const { data: hash, error, isPending, reset, writeContract } = useWriteContract();
-  const receipt = useWaitForTransactionReceipt({ hash });
+  const [rejectedCreateHash, setRejectedCreateHash] = useState<Hex>();
+  const receipt = useWaitForTransactionReceipt({
+    chainId: giwaSepolia.id,
+    hash,
+    onReplaced: ({ reason, replacedTransaction }) => {
+      if (!isAllowedTransactionReplacement(reason)) {
+        setRejectedCreateHash(replacedTransaction.hash);
+      }
+    },
+  });
   const [createOwner, setCreateOwner] = useReducer(mutationOwnerReducer, undefined);
 
   useEffect(() => {
@@ -61,25 +73,43 @@ export function OpenMadangForm() {
     return undefined;
   }, [chainId, isConnected]);
 
-  const receiptForCurrentAccount = Boolean(
-    receipt.isSuccess && isReceiptForCurrentAccount(address, receipt.data?.from),
-  );
   const createForCurrentAccount = isMutationForCurrentAccount(
     address,
     createOwner,
   );
+  const createReplacementRejected = isRejectedReplacementForHash(
+    hash,
+    rejectedCreateHash,
+  );
+  const createdId = receipt.isSuccess && address && !createReplacementRejected
+    ? getCreatedCampaignIdFromReceipt({
+        logs: receipt.data.logs,
+        contractAddress: wadangAddress,
+        organizer: address,
+      })
+    : undefined;
+  const receiptForCurrentAccount = Boolean(
+    createdId !== undefined &&
+    receipt.isSuccess &&
+    createForCurrentAccount,
+  );
   const createWalletPending = createForCurrentAccount && isPending;
   const createReceiptPending = createForCurrentAccount && receipt.isLoading;
-  const createError = createForCurrentAccount ? error ?? receipt.error : undefined;
-  const createdId = receiptForCurrentAccount && receipt.data
-    ? getCreatedCampaignId(receipt.data.logs)
+  const createResultError = createReplacementRejected
+    ? new Error("Transaction replaced")
+    : receipt.isSuccess && !receiptForCurrentAccount
+      ? new Error("Transaction result mismatch")
+      : undefined;
+  const createError = createForCurrentAccount
+    ? error ?? receipt.error ?? createResultError
     : undefined;
-  const sharePath = createdId ? `/madang/${createdId}` : undefined;
+  const sharePath = createdId !== undefined ? `/madang/${createdId}` : undefined;
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFormError(undefined);
     setCopied(false);
+    setCopyError(undefined);
     if (!wadangAddress || prerequisite) return;
 
     const form = new FormData(event.currentTarget);
@@ -97,9 +127,11 @@ export function OpenMadangForm() {
     }
 
     setCreateOwner(address);
+    setRejectedCreateHash(undefined);
     writeContract({
       address: wadangAddress,
       abi: wadangAbi,
+      chainId: giwaSepolia.id,
       functionName: "createCampaign",
       args: [
         title.trim(),
@@ -113,8 +145,14 @@ export function OpenMadangForm() {
 
   async function copyShareLink() {
     if (!sharePath) return;
-    await navigator.clipboard.writeText(`${window.location.origin}${sharePath}`);
-    setCopied(true);
+    setCopyError(undefined);
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}${sharePath}`);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+      setCopyError("링크를 복사하지 못했습니다. 공유 화면을 연 뒤 주소창의 링크를 복사해 주세요.");
+    }
   }
 
   const visibleError = formError ?? (createError ? formatContractError(createError) : undefined);
@@ -186,7 +224,7 @@ export function OpenMadangForm() {
         </aside>
       </div>
 
-      {receiptForCurrentAccount && hash && (
+      {receiptForCurrentAccount && receipt.data && (
         <div className="receipt-card create-receipt" role="status">
           <WadangStamp label="MADANG OPEN" />
           <div>
@@ -198,9 +236,10 @@ export function OpenMadangForm() {
                   <Link className="button button-dark" href={sharePath}>공유 화면 열기 <ExternalLink size={14} /></Link>
                   <button className="button button-light" onClick={copyShareLink} type="button"><Copy size={14} />{copied ? "복사됨" : "링크 복사"}</button>
                 </div>
+                {copyError && <div className="error-box" role="alert">{copyError}</div>}
               </>
             ) : <p>트랜잭션은 확정됐지만 캠페인 ID를 읽지 못했습니다. 내 마당에서 다시 확인해 주세요.</p>}
-            <a className="text-link" href={`${explorerUrl}/tx/${hash}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a>
+            <a className="text-link" href={`${explorerUrl}/tx/${receipt.data.transactionHash}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a>
           </div>
         </div>
       )}

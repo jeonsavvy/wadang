@@ -10,8 +10,8 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useReducer } from "react";
-import { getAddress, isAddressEqual, type Address, zeroAddress, zeroHash } from "viem";
+import { useEffect, useReducer, useState } from "react";
+import { getAddress, isAddressEqual, type Address, type Hex, zeroAddress, zeroHash } from "viem";
 import {
   useAccount,
   useReadContract,
@@ -27,9 +27,12 @@ import {
   formatDate,
   getCampaignPhase,
   getParticipationStep,
+  hasCampaignCanceledEvent,
+  hasCampaignClaimedEvent,
   hasClaimedForCurrentAccount,
+  isAllowedTransactionReplacement,
   isMutationForCurrentAccount,
-  isReceiptForCurrentAccount,
+  isRejectedReplacementForHash,
   phaseLabels,
   shortenAddress,
 } from "@/lib/campaign-state";
@@ -100,9 +103,27 @@ export function MadangDetail({ id }: { id: string }) {
     },
   });
   const claimWrite = useWriteContract();
-  const claimReceipt = useWaitForTransactionReceipt({ hash: claimWrite.data });
+  const [rejectedClaimHash, setRejectedClaimHash] = useState<Hex>();
+  const claimReceipt = useWaitForTransactionReceipt({
+    chainId: giwaSepolia.id,
+    hash: claimWrite.data,
+    onReplaced: ({ reason, replacedTransaction }) => {
+      if (!isAllowedTransactionReplacement(reason)) {
+        setRejectedClaimHash(replacedTransaction.hash);
+      }
+    },
+  });
   const cancelWrite = useWriteContract();
-  const cancelReceipt = useWaitForTransactionReceipt({ hash: cancelWrite.data });
+  const [rejectedCancelHash, setRejectedCancelHash] = useState<Hex>();
+  const cancelReceipt = useWaitForTransactionReceipt({
+    chainId: giwaSepolia.id,
+    hash: cancelWrite.data,
+    onReplaced: ({ reason, replacedTransaction }) => {
+      if (!isAllowedTransactionReplacement(reason)) {
+        setRejectedCancelHash(replacedTransaction.hash);
+      }
+    },
+  });
   const [claimOwner, setClaimOwner] = useReducer(mutationOwnerReducer, undefined);
   const [cancelOwner, setCancelOwner] = useReducer(mutationOwnerReducer, undefined);
   const resetClaim = claimWrite.reset;
@@ -115,7 +136,7 @@ export function MadangDetail({ id }: { id: string }) {
     setCancelOwner(undefined);
     resetClaim();
     resetCancel();
-  }, [address, resetCancel, resetClaim]);
+  }, [address, campaignId, resetCancel, resetClaim]);
 
   useEffect(() => {
     if (claimReceipt.isSuccess) {
@@ -134,30 +155,69 @@ export function MadangDetail({ id }: { id: string }) {
     address && campaign && isAddressEqual(address, campaign.organizer),
   );
   const isVerified = verificationRead.data;
+  const claimForCurrentAccount = isMutationForCurrentAccount(address, claimOwner);
+  const cancelForCurrentAccount = isMutationForCurrentAccount(address, cancelOwner);
+  const claimReplacementRejected = isRejectedReplacementForHash(
+    claimWrite.data,
+    rejectedClaimHash,
+  );
+  const cancelReplacementRejected = isRejectedReplacementForHash(
+    cancelWrite.data,
+    rejectedCancelHash,
+  );
   const claimReceiptForCurrentAccount = Boolean(
-    claimReceipt.isSuccess && isReceiptForCurrentAccount(address, claimReceipt.data?.from),
+    !claimReplacementRejected &&
+    claimReceipt.isSuccess &&
+    claimForCurrentAccount &&
+    address &&
+    hasCampaignClaimedEvent({
+      logs: claimReceipt.data.logs,
+      contractAddress: wadangAddress,
+      campaignId,
+      account: address,
+    }),
   );
   const cancelReceiptForCurrentAccount = Boolean(
-    cancelReceipt.isSuccess && isReceiptForCurrentAccount(address, cancelReceipt.data?.from),
+    !cancelReplacementRejected &&
+    cancelReceipt.isSuccess &&
+    cancelForCurrentAccount &&
+    address &&
+    hasCampaignCanceledEvent({
+      logs: cancelReceipt.data.logs,
+      contractAddress: wadangAddress,
+      campaignId,
+      organizer: address,
+    }),
   );
+  const claimReceiptHash = claimReceiptForCurrentAccount
+    ? claimReceipt.data?.transactionHash
+    : undefined;
   const hasClaimed = hasClaimedForCurrentAccount({
     onchainClaimed: claimedRead.data === true,
     currentAccount: address,
-    receiptFrom: claimReceipt.isSuccess ? claimReceipt.data?.from : undefined,
+    receiptFrom: claimReceiptForCurrentAccount ? address : undefined,
   });
-  const claimForCurrentAccount = isMutationForCurrentAccount(address, claimOwner);
-  const cancelForCurrentAccount = isMutationForCurrentAccount(address, cancelOwner);
   const claimPending = claimForCurrentAccount && (
     claimWrite.isPending || claimReceipt.isLoading
   );
   const cancelPending = cancelForCurrentAccount && (
     cancelWrite.isPending || cancelReceipt.isLoading
   );
+  const claimResultError = claimReplacementRejected
+    ? new Error("Transaction replaced")
+    : claimReceipt.isSuccess && !claimReceiptForCurrentAccount
+      ? new Error("Transaction result mismatch")
+      : undefined;
+  const cancelResultError = cancelReplacementRejected
+    ? new Error("Transaction replaced")
+    : cancelReceipt.isSuccess && !cancelReceiptForCurrentAccount
+      ? new Error("Transaction result mismatch")
+      : undefined;
   const claimError = claimForCurrentAccount
-    ? claimWrite.error ?? claimReceipt.error
+    ? claimWrite.error ?? claimReceipt.error ?? claimResultError
     : undefined;
   const cancelError = cancelForCurrentAccount
-    ? cancelWrite.error ?? cancelReceipt.error
+    ? cancelWrite.error ?? cancelReceipt.error ?? cancelResultError
     : undefined;
   const step = phase
     ? getParticipationStep({
@@ -172,20 +232,29 @@ export function MadangDetail({ id }: { id: string }) {
   function claim() {
     if (!wadangAddress || !campaignId || step !== "claim") return;
     setClaimOwner(address);
+    setRejectedClaimHash(undefined);
     claimWrite.writeContract({
       address: wadangAddress,
       abi: wadangAbi,
+      chainId: giwaSepolia.id,
       functionName: "claim",
       args: [campaignId],
     });
   }
 
   function cancel() {
-    if (!wadangAddress || !campaignId || !isOrganizer) return;
+    if (
+      !wadangAddress ||
+      !campaignId ||
+      !isOrganizer ||
+      chainId !== giwaSepolia.id
+    ) return;
     setCancelOwner(address);
+    setRejectedCancelHash(undefined);
     cancelWrite.writeContract({
       address: wadangAddress,
       abi: wadangAbi,
+      chainId: giwaSepolia.id,
       functionName: "cancelCampaign",
       args: [campaignId],
     });
@@ -202,7 +271,7 @@ export function MadangDetail({ id }: { id: string }) {
           <div className="notice preview-notice"><CircleAlert size={19} /><div><strong>테스트넷 배포 전</strong>WADANG 컨트랙트 주소가 설정되면 실제 캠페인 데이터를 표시합니다.</div></div>
         )}
         {campaignRead.isLoading && wadangAddress && <div className="empty-state"><LoaderCircle className="spin" />마당 #{id}을 읽는 중…</div>}
-        {campaignRead.error && <div className="error-box">마당을 읽지 못했습니다. 링크의 마당 ID와 GIWA RPC 상태를 확인해 주세요.</div>}
+        {campaignRead.error && <div className="error-box" role="alert">마당을 읽지 못했습니다. 링크의 마당 ID와 GIWA RPC 상태를 확인해 주세요.</div>}
         {campaign && (
           <>
           <section className="campaign-hero campaign-overview">
@@ -238,14 +307,14 @@ export function MadangDetail({ id }: { id: string }) {
                   <CheckRow ok={hasClaimed} label="참여" detail={hasClaimed ? "입장 기록 있음" : "참여 전"} neutral={!hasClaimed} />
                 </div>
 
-                {verificationRead.error && <div className="error-box">Dojang 상태를 읽지 못했습니다. 네트워크 연결을 확인한 뒤 다시 조회해 주세요.</div>}
+                {verificationRead.error && <div className="error-box" role="alert">Dojang 상태를 읽지 못했습니다. 네트워크 연결을 확인한 뒤 다시 조회해 주세요.</div>}
                 {isVerified === false && (
                   <div className="error-box">이 지갑의 테스트 인증을 찾지 못했습니다. <a href={playgroundUrl} rel="noreferrer" target="_blank">GIWA Playground 확인 <ExternalLink size={12} /></a></div>
                 )}
                 {hasClaimed && !claimReceiptForCurrentAccount && <div className="notice compact-notice"><CircleAlert size={17} /><div><strong>이미 입장한 지갑입니다</strong>Explorer에서 기존 참여 기록을 확인할 수 있습니다.</div></div>}
                 {claimError && <div className="error-box" role="alert">{formatContractError(claimError)}</div>}
-                {claimReceiptForCurrentAccount && claimWrite.data && (
-                  <div className="receipt-card compact-receipt"><WadangStamp label="ENTRY RECORDED" /><div><strong>입장이 기록되었습니다.</strong><p>참여 트랜잭션이 GIWA Sepolia에 기록됐습니다.</p><a className="text-link" href={`${explorerUrl}/tx/${claimWrite.data}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a></div></div>
+                {claimReceiptForCurrentAccount && claimReceiptHash && (
+                  <div className="receipt-card compact-receipt"><WadangStamp label="ENTRY RECORDED" /><div><strong>입장이 기록되었습니다.</strong><p>참여 트랜잭션이 GIWA Sepolia에 기록됐습니다.</p><a className="text-link" href={`${explorerUrl}/tx/${claimReceiptHash}`} rel="noreferrer" target="_blank">Explorer 영수증 ↗</a></div></div>
                 )}
 
                 <button className="button button-accent button-large claim-button" disabled={!wadangAddress || step !== "claim" || claimPending} onClick={claim} type="button">
@@ -266,10 +335,15 @@ export function MadangDetail({ id }: { id: string }) {
               </dl>
               {wadangAddress && <a className="text-link" href={`${explorerUrl}/address/${wadangAddress}`} rel="noreferrer" target="_blank">컨트랙트 살펴보기 ↗</a>}
               {isOrganizer && phase !== "canceled" && (
-                <button className="cancel-button" disabled={cancelPending} onClick={cancel} type="button"><XCircle size={15} />마당 닫기</button>
+                <>
+                  {chainId !== giwaSepolia.id && (
+                    <div className="notice compact-notice"><CircleAlert size={17} /><div><span role="status"><strong>GIWA Sepolia 전환 필요</strong>현재 네트워크에서는 마당을 닫을 수 없습니다. 상단의 GIWA Sepolia 전환 버튼을 눌러 주세요.</span></div></div>
+                  )}
+                  <button className="cancel-button" disabled={cancelPending || chainId !== giwaSepolia.id} onClick={cancel} type="button"><XCircle size={15} />마당 닫기</button>
+                </>
               )}
-              {cancelError && <div className="error-box">{formatContractError(cancelError)}</div>}
-              {cancelReceiptForCurrentAccount && <div className="success-box">캠페인이 닫혔습니다. 기존 참여 기록은 그대로 보존됩니다.</div>}
+              {cancelError && <div className="error-box" role="alert">{formatContractError(cancelError)}</div>}
+              {cancelReceiptForCurrentAccount && <div className="success-box" role="status">캠페인이 닫혔습니다. 기존 참여 기록은 그대로 보존됩니다.</div>}
             </aside>
           </section>
           </>

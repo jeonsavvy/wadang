@@ -39,6 +39,7 @@ export function ManageMadang() {
   const { address, chainId, isConnected } = useAccount();
   const [filter, setFilter] = useState<CampaignFilter>("all");
   const [copiedId, setCopiedId] = useState<number>();
+  const [copyError, setCopyError] = useState<string>();
   const safeAddress = wadangAddress ?? zeroAddress;
   const count = useReadContract({
     address: safeAddress,
@@ -74,8 +75,14 @@ export function ManageMadang() {
   const visibleCampaigns = campaigns.filter(({ phase }) => matchesFilter(filter, phase));
 
   async function copyShareLink(id: number) {
-    await navigator.clipboard.writeText(`${window.location.origin}/madang/${id}`);
-    setCopiedId(id);
+    setCopyError(undefined);
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/madang/${id}`);
+      setCopiedId(id);
+    } catch {
+      setCopiedId(undefined);
+      setCopyError("링크를 복사하지 못했습니다. 마당 화면을 연 뒤 주소창의 링크를 복사해 주세요.");
+    }
   }
 
   return (
@@ -107,7 +114,7 @@ export function ManageMadang() {
               );
             })}
           </div>
-          <span className="workspace-source">WadangCampaigns 실시간 조회</span>
+          <span className="workspace-source">GIWA Sepolia 온체인 조회</span>
         </div>
 
         <div className="workspace-body">
@@ -125,8 +132,9 @@ export function ManageMadang() {
             <div className="empty-state"><LoaderCircle className="spin" />GIWA Sepolia에서 캠페인을 읽는 중…</div>
           )}
           {(count.error || campaignReads.error) && (
-            <div className="error-box">GIWA RPC에서 캠페인을 읽지 못했습니다. 네트워크 상태를 확인하고 새로고침해 주세요.</div>
+            <div className="error-box" role="alert">GIWA RPC에서 캠페인을 읽지 못했습니다. 네트워크 상태를 확인하고 새로고침해 주세요.</div>
           )}
+          {copyError && <div className="error-box" role="alert">{copyError}</div>}
           {wadangAddress && isConnected && !count.isLoading && !campaignReads.isLoading && campaigns.length === 0 && (
             <div className="empty-state product-empty"><strong>아직 만든 마당이 없습니다</strong><span>기간과 정원을 입력하면 공유 가능한 캠페인 링크가 만들어집니다.</span><Link className="button button-dark" href="/open">첫 마당 만들기</Link></div>
           )}

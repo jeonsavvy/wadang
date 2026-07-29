@@ -19,7 +19,37 @@ import {
   wadangRelease,
 } from "@/lib/release";
 
-export const metadata: Metadata = { title: "GASOK 제출자료" };
+const title = "GASOK 제출자료 | WADANG";
+const description =
+  "WADANG 앱, 피치덱, 팀 소개, 기술문서와 GIWA Sepolia 배포 영수증을 한곳에서 확인합니다.";
+const image = {
+  url: "/wadang-social-card.png",
+  width: 1200,
+  height: 630,
+  alt: "Dojang 인증 지갑의 참여를 온체인에 기록하는 WADANG",
+  type: "image/png",
+};
+
+export const metadata: Metadata = {
+  title: "GASOK 제출자료",
+  description,
+  alternates: { canonical: "/gasok" },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: "WADANG",
+    title,
+    description,
+    url: "/gasok",
+    images: [image],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [image],
+  },
+};
 
 const transactionUrl = (hash: string) => `${explorerUrl}/tx/${hash}`;
 
@@ -88,6 +118,7 @@ export default function GasokPage() {
           <dt>Network</dt><dd>{wadangRelease.network} · Chain ID {wadangRelease.chainId}</dd>
           <dt>Application</dt><dd><a href={wadangRelease.appUrl}>{wadangRelease.appUrl}</a></dd>
           <dt>Contract</dt><dd><a href={`${explorerUrl}/address/${wadangRelease.contractAddress}#code`} rel="noreferrer" target="_blank"><code>{wadangRelease.contractAddress}</code></a></dd>
+          <dt>Active Campaign</dt><dd><Link href={`/madang/${wadangRelease.activeCampaign.id}`} prefetch={false}>마당 #{wadangRelease.activeCampaign.id} 입장</Link> · <a href={transactionUrl(wadangRelease.activeCampaign.creationTransaction)} rel="noreferrer" target="_blank">생성 영수증</a> · {wadangRelease.activeCampaign.endsAt.slice(0, 10)}까지</dd>
           <dt>Campaign 1</dt><dd><Link href="/madang/1" prefetch={false}>생성·참여·현재 자격 확인</Link> · <a href={transactionUrl(wadangRelease.transactions.createCampaign1)} rel="noreferrer" target="_blank">생성 영수증</a> · <a href={transactionUrl(wadangRelease.transactions.claimCampaign1)} rel="noreferrer" target="_blank">참여 영수증</a></dd>
           <dt>Campaign 2</dt><dd><a href={transactionUrl(wadangRelease.transactions.cancelCampaign2)} rel="noreferrer" target="_blank">운영자 취소 영수증</a></dd>
           <dt>Simulation</dt><dd>미인증 {wadangRelease.simulations.unverifiedClaim} · 중복 {wadangRelease.simulations.duplicateClaim} · 비운영자 취소 {wadangRelease.simulations.unauthorizedCancel}</dd>

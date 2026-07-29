@@ -5,6 +5,7 @@ const routes = [
   { path: "/open", ready: "main h1" },
   { path: "/manage", ready: "main h1" },
   { path: "/madang/1", ready: ".campaign-detail-shell" },
+  { path: "/madang/4", ready: ".campaign-detail-shell" },
   { path: "/docs", ready: ".docs-page h1" },
   { path: "/deck", ready: ".deck-cover" },
   { path: "/team", ready: ".profile-sheet" },

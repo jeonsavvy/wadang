@@ -13,7 +13,37 @@ import { WadangMark } from "@/components/wadang-mark";
 import { wadangAddress } from "@/lib/contract";
 import { wadangRelease } from "@/lib/release";
 
-export const metadata: Metadata = { title: "GASOK 피치덱" };
+const title = "GASOK 피치덱 | WADANG";
+const description =
+  "Dojang 인증 지갑의 참여를 온체인에 기록하고 외부 앱의 접근 조건으로 연결하는 WADANG 피치덱입니다.";
+const image = {
+  url: "/wadang-social-card.png",
+  width: 1200,
+  height: 630,
+  alt: "Dojang 인증 지갑의 참여를 온체인에 기록하는 WADANG",
+  type: "image/png",
+};
+
+export const metadata: Metadata = {
+  title: "GASOK 피치덱",
+  description,
+  alternates: { canonical: "/deck" },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: "WADANG",
+    title,
+    description,
+    url: "/deck",
+    images: [image],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [image],
+  },
+};
 
 function DeckChrome({ number, children }: { number: number; children: React.ReactNode }) {
   return <><div className="deck-logo"><WadangMark size={27} /><span>WADANG <small>와당</small></span></div><div className="deck-number">{String(number).padStart(2, "0")} / 09</div>{children}</>;

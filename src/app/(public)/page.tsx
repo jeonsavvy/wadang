@@ -6,11 +6,43 @@ import {
   DatabaseZap,
   ShieldCheck,
 } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { StatusPill } from "@/components/status-pill";
 import { WadangMark, WadangStamp } from "@/components/wadang-mark";
 import { wadangAddress } from "@/lib/contract";
+import { wadangRelease } from "@/lib/release";
+
+const title = "WADANG | Dojang 인증 지갑의 온체인 캠페인";
+const description =
+  "기간과 정원을 정해 마당을 열고, Dojang 인증 지갑의 참여를 GIWA Sepolia에 기록하는 온체인 캠페인.";
+const image = {
+  url: "/wadang-social-card.png",
+  width: 1200,
+  height: 630,
+  alt: "Dojang 인증 지갑의 참여를 온체인에 기록하는 WADANG",
+  type: "image/png",
+};
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: "WADANG",
+    title,
+    description,
+    url: "/",
+    images: [image],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [image],
+  },
+};
 
 export default function Home() {
   return (
@@ -55,9 +87,9 @@ export default function Home() {
               <BadgeCheck size={22} />
             </div>
             <div>
-              <small>GIWA SEPOLIA · MADANG #001</small>
-              <h2>테스트넷 입장</h2>
-              <p>Dojang 테스트 인증과 참여 기록을 확인하는 공개 마당</p>
+              <small>GIWA SEPOLIA · MADANG #{String(wadangRelease.activeCampaign.id).padStart(3, "0")}</small>
+              <h2>공개 체험 마당</h2>
+              <p>Dojang 테스트 인증과 GIWA Sepolia 참여 영수증을 확인하는 공개 마당</p>
             </div>
             <div className="madang-pass-bottom">
               <span>지갑당 한 번</span>
@@ -94,7 +126,7 @@ export default function Home() {
             <span className="eyebrow">운영자와 참여자</span>
             <h2>마당을 열고,<br />인증 지갑이 입장합니다.</h2>
           </div>
-          <Link className="text-link" href="/madang/1" prefetch={false}>테스트넷 마당 보기 ↗</Link>
+          <Link className="text-link" href={`/madang/${wadangRelease.activeCampaign.id}`} prefetch={false}>활성 마당 보기 ↗</Link>
         </div>
         <div className="journey-grid">
           <article className="journey-card organizer-card">

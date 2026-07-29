@@ -11,6 +11,7 @@ const appRoutes = [
   "/open",
   "/manage",
   "/madang/1",
+  "/madang/4",
   "/docs",
   "/deck",
   "/team",
@@ -46,6 +47,13 @@ const releaseAssets = [
     contentType: "image/webp",
     minimumBytes: 10_000,
     maximumBytes: 100_000,
+  },
+  {
+    path: "/wadang-social-card.png",
+    localPath: "public/wadang-social-card.png",
+    contentType: "image/png",
+    minimumBytes: 100_000,
+    maximumBytes: 500_000,
   },
 ];
 

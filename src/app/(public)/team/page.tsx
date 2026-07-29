@@ -4,7 +4,40 @@ import Image from "next/image";
 
 import { WadangMark } from "@/components/wadang-mark";
 
-export const metadata: Metadata = { title: "팀 소개" };
+const title = "팀 소개 | WADANG";
+const description =
+  "WADANG의 제품 기획, 스마트 컨트랙트, 프론트엔드, 테스트와 기술문서를 맡은 전찬혁의 팀 프로필입니다.";
+const image = {
+  url: "/team/jeon-chan-hyuk.webp",
+  width: 480,
+  height: 615,
+  alt: "전찬혁 프로필 사진",
+  type: "image/webp",
+};
+
+export const metadata: Metadata = {
+  title: "팀 소개",
+  description,
+  alternates: { canonical: "/team" },
+  openGraph: {
+    type: "profile",
+    locale: "ko_KR",
+    siteName: "WADANG",
+    title,
+    description,
+    url: "/team",
+    images: [image],
+    firstName: "찬혁",
+    lastName: "전",
+    username: "jeonsavvy",
+  },
+  twitter: {
+    card: "summary",
+    title,
+    description,
+    images: [image],
+  },
+};
 
 export default function TeamPage() {
   return (

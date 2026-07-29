@@ -10,6 +10,15 @@ export const wadangRelease = {
   sourceCommit: "27b70b520654110d216a5c9db8083043e4251d7e",
   contractSourceSha256:
     "86a60fe99f44b2890d8da5c36a36faa08a57dcc5f9c920b180b7838187b5a86b",
+  activeCampaign: {
+    id: 4,
+    title: "WADANG 공개 체험 마당",
+    details:
+      "Dojang 테스트 인증 지갑으로 입장하고 GIWA Sepolia에 기록된 참여 영수증을 확인합니다.",
+    endsAt: "2026-10-27T10:36:05.000Z",
+    creationTransaction:
+      "0xef26a180b9bb862514ede8ac92050082d456098da9f761b9f09c10d42375a213",
+  },
   transactions: {
     deployment:
       "0xdbb5dc5c718a7aba5e2f769257a52fd6253da5986a59f830992bee168724ff8d",
