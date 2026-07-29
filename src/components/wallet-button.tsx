@@ -1,15 +1,25 @@
 "use client";
 
 import { Check, ChevronDown, CircleAlert, LoaderCircle, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 
 import { giwaRpcUrls, giwaSepolia } from "@/lib/chain";
 import { shortenAddress } from "@/lib/campaign-state";
 import { getMetaMaskDappUrl, isMobileBrowser } from "@/lib/wallet-link";
 
+const subscribeToHydration = () => () => undefined;
+const getHydratedSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export function WalletButton() {
   const [feedback, setFeedback] = useState<string | null>(null);
+  // Keep the server-rendered control inert until React can handle the wallet request.
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration,
+    getHydratedSnapshot,
+    getServerSnapshot,
+  );
   const { address, chainId, isConnected } = useAccount();
   const { connectors, connect, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
@@ -47,7 +57,7 @@ export function WalletButton() {
         <button
           aria-describedby={feedback ? "wallet-connect-feedback" : undefined}
           className="button button-dark"
-          disabled={isConnecting}
+          disabled={!isHydrated || isConnecting}
           onClick={handleConnect}
           type="button"
         >
