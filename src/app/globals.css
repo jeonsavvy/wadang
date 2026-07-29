@@ -92,6 +92,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 .button:disabled { cursor: not-allowed; opacity: .48; }
 .button-dark { background: var(--ink); color: var(--porcelain); }
 .button-accent { border-color: var(--cinnabar); background: var(--cinnabar); color: #fff; }
+.button-accent:disabled { border-color: #c89f97; background: #e2c2bb; color: #633c35; opacity: 1; }
 .button-light { background: var(--porcelain); color: var(--ink); }
 .button-warning { border-color: var(--gold); background: #f1dfb9; color: #4b3c23; }
 .button-large { min-height: 52px; padding-inline: 24px; }
@@ -267,7 +268,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 .field input, .field textarea { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 0; background: var(--porcelain); color: var(--ink); }
 .field input { min-height: 50px; padding: 0 14px; }
 .field textarea { min-height: 120px; padding: 14px; resize: vertical; line-height: 1.65; }
-.field input::placeholder, .field textarea::placeholder { color: #8a887f; }
+.field input::placeholder, .field textarea::placeholder { color: #74736c; }
 .form-actions { margin-top: 28px; padding-top: 23px; border-top: 1px solid var(--ink); display: flex; justify-content: space-between; align-items: center; gap: 30px; }
 .form-actions p { max-width: 470px; margin: 0; color: var(--muted); font-size: 10px; line-height: 1.7; }
 .form-actions p strong { color: var(--ink); }
@@ -300,7 +301,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 .campaign-overview-main > p { max-width: 650px; margin: 0; color: #ced8cf; font-size: 12px; line-height: 1.75; }
 .campaign-meta { margin: 24px 0 0; display: flex; gap: 28px; flex-wrap: wrap; }
 .campaign-meta > div { display: grid; gap: 5px; }
-.campaign-meta dt { color: #9fb0a2; font-size: 8px; }
+.campaign-meta dt { color: #a3b4a5; font-size: 8px; }
 .campaign-meta dd { margin: 0; font-size: 9px; }
 .claim-meter { min-height: 220px; padding: 25px; border: 1px solid #718273; background: rgba(18,31,23,.4); display: flex; flex-direction: column; justify-content: center; }
 .claim-meter > span { color: #aebcac; font-size: 8px; }
@@ -310,7 +311,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
 .claim-meter i { display: block; height: 100%; background: #d2b06d; }
 .claim-meter > p { margin: 9px 0 0; color: #aebcac; font-size: 8px; }
 .current-step { margin-top: 20px; padding-top: 14px; border-top: 1px solid #5d7061; display: grid; gap: 5px; }
-.current-step small { color: #9fb0a2; font-size: 7px; }
+.current-step small { color: #a3b4a5; font-size: 7px; }
 .current-step b { font-size: 11px; }
 .claim-grid { margin-top: 20px; display: grid; grid-template-columns: minmax(0,1.25fr) minmax(280px,.75fr); gap: 20px; }
 .check-list { display: grid; }
@@ -514,8 +515,8 @@ code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhe
     --muted: #56564f;
     --screen-body: 15px;
     --screen-supporting: 13px;
-    --screen-label: 11px;
-    --screen-micro: 10px;
+    --screen-label: 12px;
+    --screen-micro: 11px;
     --screen-leading: 1.7;
   }
 

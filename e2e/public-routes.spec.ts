@@ -2,6 +2,23 @@ import { expect, type Page, test } from "@playwright/test";
 
 const giwaRpcPattern = /^https:\/\/sepolia-rpc(?:-flashblocks)?\.giwa\.io(?:\/.*)?$/;
 
+function contrastRatio(foreground: string, background: string) {
+  const luminance = (color: string) => {
+    const channels = color.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+    if (!channels || channels.length !== 3) throw new Error(`Unsupported color: ${color}`);
+
+    const [red, green, blue] = channels.map((channel) => {
+      const value = channel / 255;
+      return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+  };
+
+  const lighter = Math.max(luminance(foreground), luminance(background));
+  const darker = Math.min(luminance(foreground), luminance(background));
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 const routes = [
   { path: "/", ready: ".hero" },
   { path: "/open", ready: "main h1" },
@@ -103,6 +120,45 @@ test("an injected wallet still connects inside a wallet browser", async ({ page 
   await page.getByRole("button", { name: "지갑 연결" }).click();
 
   await expect(page.locator(".wallet-menu summary")).toContainText("0x00000…A5733");
+});
+
+test("supporting copy keeps readable screen sizes and contrast", async ({ page }) => {
+  await gotoReady(page, "/open", "main h1");
+
+  const formStyles = await page.locator("#title").evaluate((input) => ({
+    background: getComputedStyle(input).backgroundColor,
+    labelSize: Number.parseFloat(
+      getComputedStyle(document.querySelector('label[for="title"] span') as Element).fontSize,
+    ),
+    placeholder: getComputedStyle(input, "::placeholder").color,
+  }));
+  const disabledActionStyles = await page.getByRole("button", { name: "마당 만들기" }).evaluate(
+    (button) => ({
+      background: getComputedStyle(button).backgroundColor,
+      color: getComputedStyle(button).color,
+      opacity: getComputedStyle(button).opacity,
+    }),
+  );
+
+  expect(formStyles.labelSize).toBeGreaterThanOrEqual(12);
+  expect(contrastRatio(formStyles.placeholder, formStyles.background)).toBeGreaterThanOrEqual(4.5);
+  expect(Number(disabledActionStyles.opacity)).toBe(1);
+  expect(contrastRatio(disabledActionStyles.color, disabledActionStyles.background)).toBeGreaterThanOrEqual(4.5);
+
+  await gotoReady(page, "/madang/4", ".campaign-detail-shell");
+  await expect(page.getByRole("heading", { name: "WADANG 공개 체험 마당" })).toBeVisible({
+    timeout: 20_000,
+  });
+
+  const campaignStyles = await page.locator(".campaign-meta dt").first().evaluate((label) => ({
+    background: getComputedStyle(document.querySelector(".campaign-overview") as Element)
+      .backgroundColor,
+    color: getComputedStyle(label).color,
+    fontSize: Number.parseFloat(getComputedStyle(label).fontSize),
+  }));
+
+  expect(campaignStyles.fontSize).toBeGreaterThanOrEqual(11);
+  expect(contrastRatio(campaignStyles.color, campaignStyles.background)).toBeGreaterThanOrEqual(4.5);
 });
 
 test("keyboard users can skip directly to page content", async ({ page }) => {
