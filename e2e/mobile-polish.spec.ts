@@ -36,6 +36,44 @@ async function installInjectedWallet(page: Page, chainId: string, rejectSwitch =
   );
 }
 
+async function installMissingChainWallet(page: Page) {
+  const address = "0x00000000000000000000000000000000000a5733";
+  await page.addInitScript(
+    ({ account }) => {
+      let currentChainId = "0x1";
+
+      Object.defineProperty(window, "ethereum", {
+        configurable: true,
+        value: {
+          on() {},
+          removeListener() {},
+          async request({ method, params }: { method: string; params?: readonly unknown[] }) {
+            if (method === "eth_chainId") return currentChainId;
+            if (method === "eth_accounts" || method === "eth_requestAccounts") return [account];
+            if (method === "wallet_requestPermissions") {
+              return [{
+                caveats: [{ type: "restrictReturnedAccounts", value: [account] }],
+                parentCapability: "eth_accounts",
+              }];
+            }
+            if (method === "wallet_switchEthereumChain") {
+              throw Object.assign(new Error("Unrecognized chain"), { code: 4902 });
+            }
+            if (method === "wallet_addEthereumChain") {
+              const parameter = params?.[0] as { chainId?: string } | undefined;
+              Reflect.set(window, "__walletAddChainParameter", parameter);
+              if (parameter?.chainId) currentChainId = parameter.chainId;
+              return null;
+            }
+            return null;
+          },
+        },
+      });
+    },
+    { account: address },
+  );
+}
+
 test("desktop header keeps the existing primary navigation", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop");
   await gotoReady(page, "/", ".hero");
@@ -110,6 +148,27 @@ test.describe("mobile navigation and accessibility polish", () => {
     expect(feedbackBox?.y ?? 0).toBeGreaterThanOrEqual(
       (navigationBox?.y ?? 0) + (navigationBox?.height ?? 0),
     );
+  });
+
+  test("wallet network setup receives both GIWA RPC endpoints", async ({ page }) => {
+    await installMissingChainWallet(page);
+    await gotoReady(page, "/open", "main h1");
+
+    const header = page.locator(".site-header");
+    await header.getByRole("button", { name: "지갑 연결" }).click();
+    const switchButton = header.getByRole("button", { name: "GIWA Sepolia 전환" });
+    await expect(switchButton).toBeVisible({ timeout: 15_000 });
+    await switchButton.click();
+
+    await expect
+      .poll(() => page.evaluate(() => Reflect.get(window, "__walletAddChainParameter")))
+      .toMatchObject({
+        chainId: "0x164ce",
+        rpcUrls: [
+          "https://sepolia-rpc-flashblocks.giwa.io",
+          "https://sepolia-rpc.giwa.io",
+        ],
+      });
   });
 
   test("deck download action stays on one line", async ({ page }) => {

@@ -1,5 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
 
+const giwaRpcPattern = /^https:\/\/sepolia-rpc(?:-flashblocks)?\.giwa\.io(?:\/.*)?$/;
+
 const routes = [
   { path: "/", ready: ".hero" },
   { path: "/open", ready: "main h1" },
@@ -126,7 +128,7 @@ test.describe("product states", () => {
   });
 
   test("campaign loading state is visible while RPC is pending", async ({ page }) => {
-    await page.route("https://sepolia-rpc.giwa.io/**", async (route) => {
+    await page.route(giwaRpcPattern, async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 2_000));
       await route.abort();
     });
@@ -138,7 +140,7 @@ test.describe("product states", () => {
   });
 
   test("campaign RPC failure names the failed dependency", async ({ page }) => {
-    await page.route("https://sepolia-rpc.giwa.io/**", (route) => route.abort());
+    await page.route(giwaRpcPattern, (route) => route.abort());
 
     await gotoReady(page, "/madang/1", ".campaign-detail-shell");
     await expect(page.getByText("마당을 읽지 못했습니다. 링크의 마당 ID와 GIWA RPC 상태를 확인해 주세요.")).toBeVisible({ timeout: 20_000 });

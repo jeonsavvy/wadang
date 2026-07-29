@@ -4,7 +4,7 @@ import { Check, ChevronDown, CircleAlert, LoaderCircle, Wallet } from "lucide-re
 import { useState } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 
-import { giwaSepolia } from "@/lib/chain";
+import { giwaRpcUrls, giwaSepolia } from "@/lib/chain";
 import { shortenAddress } from "@/lib/campaign-state";
 import { getMetaMaskDappUrl, isMobileBrowser } from "@/lib/wallet-link";
 
@@ -76,7 +76,10 @@ export function WalletButton() {
           onClick={() => {
             setFeedback(null);
             switchChain(
-              { chainId: giwaSepolia.id },
+              {
+                chainId: giwaSepolia.id,
+                addEthereumChainParameter: { rpcUrls: [...giwaRpcUrls] },
+              },
               {
                 onError: () =>
                   setFeedback(

@@ -1,14 +1,29 @@
-import { createConfig, http } from "wagmi";
+import { fallback, http } from "viem";
+import { createConfig } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { giwaSepolia } from "viem/chains";
+import { giwaSepolia as baseGiwaSepolia } from "viem/chains";
 
-export { giwaSepolia };
+export const giwaRpcUrls = [
+  "https://sepolia-rpc-flashblocks.giwa.io",
+  ...baseGiwaSepolia.rpcUrls.default.http,
+] as const;
+
+export const giwaSepolia = {
+  ...baseGiwaSepolia,
+  rpcUrls: {
+    ...baseGiwaSepolia.rpcUrls,
+    default: { http: giwaRpcUrls },
+  },
+} as const;
 
 export const wagmiConfig = createConfig({
   chains: [giwaSepolia],
   connectors: [injected()],
   transports: {
-    [giwaSepolia.id]: http(),
+    [giwaSepolia.id]: fallback(
+      giwaRpcUrls.map((url) => http(url, { timeout: 5_000 })),
+      { retryCount: 0 },
+    ),
   },
   ssr: true,
 });
